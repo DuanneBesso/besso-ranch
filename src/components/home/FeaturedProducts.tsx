@@ -50,10 +50,17 @@ export default function FeaturedProducts({ products }: { products: Product[] }) 
             >
               {/* Product Image */}
               <div className="relative aspect-square bg-cream overflow-hidden">
-                {/* Placeholder - replace with actual Image component when images are added */}
-                <div className="absolute inset-0 bg-gradient-to-br from-sage/30 to-warm-brown/20 flex items-center justify-center">
-                  <span className="text-warm-brown/50 font-heading text-sm">Product Image</span>
-                </div>
+                {product.images ? (
+                  <img
+                    src={JSON.parse(product.images)[0]}
+                    alt={product.name}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-gradient-to-br from-sage/30 to-warm-brown/20 flex items-center justify-center">
+                    <span className="text-warm-brown/50 font-heading text-sm">Product Image</span>
+                  </div>
+                )}
 
                 {/* Stock Badge */}
                 {!product.inStock && (

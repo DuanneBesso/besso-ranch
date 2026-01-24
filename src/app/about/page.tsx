@@ -61,9 +61,13 @@ export default function AboutPage() {
                 href={link.href}
                 className="group card p-0 overflow-hidden"
               >
-                {/* Image Placeholder */}
-                <div className="aspect-video bg-gradient-to-br from-sage/30 to-warm-brown/20 flex items-center justify-center">
-                  <span className="text-warm-brown/50 font-heading">Image</span>
+                {/* Image */}
+                <div className="aspect-video bg-cream overflow-hidden">
+                  <img
+                    src={link.image}
+                    alt={link.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
                 </div>
 
                 {/* Content */}

@@ -34,6 +34,8 @@ async function main() {
       subcategory: 'chicken',
       stockQuantity: 24,
       featured: true,
+      displayOrder: 1,
+      images: JSON.stringify(['/images/products/chicken-eggs.jpg']),
     },
     {
       name: 'Duck Eggs',
@@ -45,6 +47,8 @@ async function main() {
       subcategory: 'duck',
       stockQuantity: 12,
       featured: true,
+      displayOrder: 2,
+      images: JSON.stringify(['/images/animals/ducks.jpg']),
     },
     {
       name: 'Turkey Eggs',
@@ -56,6 +60,7 @@ async function main() {
       subcategory: 'turkey',
       stockQuantity: 0,
       inStock: false,
+      images: JSON.stringify(['/images/animals/turkeys.jpg']),
     },
     {
       name: 'Goose Eggs',
@@ -66,6 +71,9 @@ async function main() {
       category: 'eggs',
       subcategory: 'goose',
       stockQuantity: 6,
+      featured: true,
+      displayOrder: 4,
+      images: JSON.stringify(['/images/animals/geese.jpg']),
     },
     // Poultry
     {
@@ -109,6 +117,8 @@ async function main() {
       subcategory: 'soap',
       stockQuantity: 20,
       featured: true,
+      displayOrder: 3,
+      images: JSON.stringify(['/images/products/soap-lavender.jpg']),
     },
     {
       name: 'Goat Milk Soap - Oatmeal Honey',

@@ -92,10 +92,20 @@ export default function ProductsGrid({ products }: { products: Product[] }) {
             transition={{ duration: 0.4, delay: index * 0.05 }}
           >
             {/* Product Image */}
-            <div className={`relative bg-sage/20 flex items-center justify-center ${
+            <div className={`relative bg-sage/20 overflow-hidden ${
               viewMode === "grid" ? "aspect-square" : "w-32 h-32 flex-shrink-0"
             }`}>
-              <span className="text-warm-brown/40 font-heading text-sm">Photo</span>
+              {product.images ? (
+                <img
+                  src={JSON.parse(product.images)[0]}
+                  alt={product.name}
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-warm-brown/40 font-heading text-sm">Photo</span>
+                </div>
+              )}
 
               {/* Stock Badge */}
               {!product.inStock && (
