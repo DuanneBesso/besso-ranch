@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { CartProvider } from "@/context/CartContext";
+import CartDrawer from "@/components/cart/CartDrawer";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://bessoranch.com"),
@@ -68,7 +70,10 @@ export default function RootLayout({
         <meta name="theme-color" content="#8B2500" />
       </head>
       <body className="min-h-screen flex flex-col">
-        {children}
+        <CartProvider>
+          {children}
+          <CartDrawer />
+        </CartProvider>
       </body>
     </html>
   );

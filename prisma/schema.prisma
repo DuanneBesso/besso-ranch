@@ -1,0 +1,271 @@
+// Besso Ranch Database Schema
+// This schema defines all tables for the website and future Livestock App integration
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================
+// ADMIN & AUTHENTICATION
+// ============================================
+
+model AdminUser {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String   // Hashed with bcrypt
+  name      String
+  role      String   @default("admin") // admin, super_admin
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================
+// PRODUCTS & INVENTORY
+// ============================================
+
+model Product {
+  id            String      @id @default(cuid())
+  name          String
+  slug          String      @unique
+  description   String?
+  price         Float
+  unit          String      // "dozen", "half dozen", "each", "bar", etc.
+  category      String      // "eggs", "poultry", "goat-milk"
+  subcategory   String?     // "chicken", "duck", "soap", etc.
+
+  // Inventory
+  stockQuantity Int         @default(0)
+  lowStockThreshold Int     @default(5)
+  inStock       Boolean     @default(true)
+
+  // Display
+  featured      Boolean     @default(false)
+  displayOrder  Int         @default(0)
+  images        String?     // JSON array of image paths
+
+  // Metadata
+  specifications String?    // JSON for flexible specs
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  // Relations
+  orderItems    OrderItem[]
+
+  @@index([category])
+  @@index([inStock])
+}
+
+// ============================================
+// ORDERS & CUSTOMERS
+// ============================================
+
+model Customer {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  firstName String
+  lastName  String
+  phone     String?
+
+  // Address
+  address   String?
+  city      String?
+  state     String?
+  zipCode   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  orders    Order[]
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique // Human-readable order number like "BR-2024-0001"
+
+  // Customer info (denormalized for order history)
+  customerId      String?
+  customer        Customer?   @relation(fields: [customerId], references: [id])
+  customerEmail   String
+  customerName    String
+  customerPhone   String?
+
+  // Delivery
+  deliveryMethod  String      // "pickup", "delivery"
+  deliveryAddress String?
+  deliveryCity    String?
+  deliveryState   String?
+  deliveryZip     String?
+  deliveryNotes   String?
+
+  // Pricing
+  subtotal        Float
+  deliveryFee     Float       @default(0)
+  tax             Float       @default(0)
+  total           Float
+
+  // Status
+  status          String      @default("pending") // pending, paid, processing, ready, shipped, delivered, cancelled, refunded
+
+  // Payment
+  stripePaymentId String?
+  paidAt          DateTime?
+
+  // Timestamps
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relations
+  items           OrderItem[]
+
+  @@index([status])
+  @@index([customerEmail])
+}
+
+model OrderItem {
+  id          String   @id @default(cuid())
+
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
+
+  // Snapshot of product at time of order
+  productName String
+  productPrice Float
+  quantity    Int
+  total       Float
+
+  createdAt   DateTime @default(now())
+}
+
+// ============================================
+// ANIMALS (for Meet the Animals & Livestock App)
+// ============================================
+
+model Animal {
+  id          String   @id @default(cuid())
+  name        String
+  type        String   // "Chicken", "Duck", "Turkey", "Goose", "Goat", "Pig", etc.
+  breed       String?
+  description String?
+  gender      String?  // "Male", "Female"
+  birthDate   DateTime?
+
+  // Status & Sale Info
+  status      String   @default("Active") // "Active", "For Sale", "Sold", "Breeding", "Deceased"
+  price       Float?   // Sale price if for sale
+  featured    Boolean  @default(false)
+
+  // Media
+  imageUrl    String?
+
+  // Livestock App Sync
+  livestockAppId String? @unique // ID from Livestock App for sync tracking
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([type])
+  @@index([status])
+}
+
+// ============================================
+// BLOG / FARM JOURNAL
+// ============================================
+
+model BlogPost {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  excerpt     String?
+  content     String    // Markdown or HTML content
+
+  // Categorization
+  category    String    // "farm-updates", "animal-spotlights", "recipes", etc.
+  tags        String?   // JSON array of tags
+
+  // Media
+  featuredImage String?
+
+  // Publishing
+  published   Boolean   @default(false)
+  publishedAt DateTime?
+
+  // SEO
+  metaTitle       String?
+  metaDescription String?
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([published])
+  @@index([category])
+}
+
+// ============================================
+// SITE SETTINGS & CONFIGURATION
+// ============================================
+
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  type      String   @default("string") // "string", "number", "boolean", "json"
+
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================
+// INVENTORY LOG (for Livestock App sync)
+// ============================================
+
+model InventoryLog {
+  id          String   @id @default(cuid())
+
+  productId   String
+
+  // Change details
+  changeType  String   // "add", "subtract", "set", "order_deduct", "manual_adjust"
+  quantity    Int
+  previousQty Int
+  newQty      Int
+
+  // Source
+  source      String   // "admin", "order", "livestock_app", "api"
+  notes       String?
+
+  createdAt   DateTime @default(now())
+
+  @@index([productId])
+  @@index([createdAt])
+}
+
+// ============================================
+// NOTIFICATION LOG
+// ============================================
+
+model NotificationLog {
+  id          String   @id @default(cuid())
+
+  type        String   // "order_new", "order_shipped", "low_stock", "out_of_stock"
+  channel     String   // "email", "sms"
+  recipient   String
+  subject     String?
+  message     String
+
+  // Status
+  sent        Boolean  @default(false)
+  sentAt      DateTime?
+  error       String?
+
+  createdAt   DateTime @default(now())
+}

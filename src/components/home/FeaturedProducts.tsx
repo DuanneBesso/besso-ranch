@@ -4,51 +4,20 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, ShoppingCart } from "lucide-react";
 
-// Placeholder products - will be replaced with data from CMS/API
-const products = [
-  {
-    id: 1,
-    name: "Farm Fresh Chicken Eggs",
-    description: "Free-range, pasture-raised chicken eggs from happy hens",
-    price: 8.00,
-    unit: "dozen",
-    image: "/images/products/chicken-eggs.jpg",
-    category: "eggs",
-    inStock: true,
-  },
-  {
-    id: 2,
-    name: "Duck Eggs",
-    description: "Rich, creamy duck eggs perfect for baking",
-    price: 12.00,
-    unit: "half dozen",
-    image: "/images/products/duck-eggs.jpg",
-    category: "eggs",
-    inStock: true,
-  },
-  {
-    id: 3,
-    name: "Goat Milk Soap - Lavender",
-    description: "Handcrafted soap with soothing lavender essential oil",
-    price: 8.00,
-    unit: "bar",
-    image: "/images/products/soap-lavender.jpg",
-    category: "goat-milk",
-    inStock: true,
-  },
-  {
-    id: 4,
-    name: "Turkey Eggs",
-    description: "Large, nutrient-rich eggs from heritage turkeys",
-    price: 15.00,
-    unit: "half dozen",
-    image: "/images/products/turkey-eggs.jpg",
-    category: "eggs",
-    inStock: false,
-  },
-];
+interface Product {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  price: number;
+  unit: string;
+  category: string;
+  subcategory: string | null;
+  inStock: boolean;
+  images: string | null;
+}
 
-export default function FeaturedProducts() {
+export default function FeaturedProducts({ products }: { products: Product[] }) {
   return (
     <section className="section bg-white">
       <div className="container-custom">
@@ -81,7 +50,7 @@ export default function FeaturedProducts() {
             >
               {/* Product Image */}
               <div className="relative aspect-square bg-cream overflow-hidden">
-                {/* Placeholder - replace with actual Image component */}
+                {/* Placeholder - replace with actual Image component when images are added */}
                 <div className="absolute inset-0 bg-gradient-to-br from-sage/30 to-warm-brown/20 flex items-center justify-center">
                   <span className="text-warm-brown/50 font-heading text-sm">Product Image</span>
                 </div>
@@ -110,10 +79,10 @@ export default function FeaturedProducts() {
               {/* Product Info */}
               <div className="p-4">
                 <span className="text-xs text-charcoal-400 uppercase tracking-wider">
-                  {product.category}
+                  {product.category.replace('-', ' ')}
                 </span>
                 <h3 className="font-heading text-lg text-warm-brown mt-1 mb-2 group-hover:text-barn-red transition-colors">
-                  <Link href={`/products/${product.category}/${product.id}`}>
+                  <Link href={`/products/${product.category}/${product.slug}`}>
                     {product.name}
                   </Link>
                 </h3>

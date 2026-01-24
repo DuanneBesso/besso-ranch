@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ShoppingCart, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
+import CartButton from "@/components/cart/CartButton";
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -94,15 +95,7 @@ export default function Header() {
 
           {/* Cart and Mobile Menu Button */}
           <div className="flex items-center space-x-4">
-            <Link
-              href="/cart"
-              className="relative p-2 text-charcoal hover:text-barn-red transition-colors"
-            >
-              <ShoppingCart className="w-6 h-6" />
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-barn-red text-white text-xs rounded-full flex items-center justify-center">
-                0
-              </span>
-            </Link>
+            <CartButton />
 
             <button
               className="lg:hidden p-2 text-charcoal"
