@@ -18,7 +18,7 @@ const productImages: Record<string, string[]> = {
 
 const featuredProducts = ['chicken-eggs', 'duck-eggs', 'goat-milk-soap-lavender', 'goose-eggs'];
 
-export async function POST(request: Request) {
+export async function POST() {
   try {
     // Update products with images and featured status
     for (const [slug, images] of Object.entries(productImages)) {
