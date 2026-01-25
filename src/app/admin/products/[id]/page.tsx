@@ -54,6 +54,7 @@ export default async function EditProductPage({
           inStock: product.inStock,
           featured: product.featured,
           displayOrder: product.displayOrder,
+          images: product.images || '',
         }}
       />
     </div>

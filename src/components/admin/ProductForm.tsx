@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import ImageUpload from './ImageUpload';
 
 interface Product {
   id?: string;
@@ -17,6 +18,7 @@ interface Product {
   inStock: boolean;
   featured: boolean;
   displayOrder: number;
+  images: string;
 }
 
 const categories = [
@@ -58,6 +60,7 @@ const defaultProduct: Product = {
   inStock: true,
   featured: false,
   displayOrder: 0,
+  images: '',
 };
 
 export default function ProductForm({ product }: { product?: Product }) {
@@ -196,6 +199,13 @@ export default function ProductForm({ product }: { product?: Product }) {
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-forest-green focus:border-transparent"
           />
         </div>
+
+        <ImageUpload
+          value={formData.images ? (JSON.parse(formData.images)[0] || '') : ''}
+          onChange={(url) => setFormData(prev => ({ ...prev, images: url ? JSON.stringify([url]) : '' }))}
+          folder="products"
+          label="Product Image"
+        />
 
         <div className="grid grid-cols-2 gap-4">
           <div>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import ImageUpload from './ImageUpload';
 
 interface Animal {
   id?: string;
@@ -290,36 +291,12 @@ export default function AnimalForm({ animal }: { animal?: Animal }) {
       <div className="bg-white rounded-lg shadow p-6 space-y-6">
         <h2 className="text-lg font-semibold text-gray-900">Image</h2>
 
-        <div>
-          <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-1">
-            Image URL
-          </label>
-          <input
-            type="text"
-            id="imageUrl"
-            name="imageUrl"
-            value={formData.imageUrl}
-            onChange={handleChange}
-            placeholder="/uploads/animals/photo.jpg"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-forest-green focus:border-transparent"
-          />
-          <p className="text-xs text-gray-500 mt-1">Enter a URL or path to the animal&apos;s photo</p>
-        </div>
-
-        {formData.imageUrl && (
-          <div className="mt-4">
-            <p className="text-sm font-medium text-gray-700 mb-2">Preview:</p>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={formData.imageUrl}
-              alt={formData.name || 'Animal preview'}
-              className="w-48 h-48 object-cover rounded-lg border border-gray-200"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-              }}
-            />
-          </div>
-        )}
+        <ImageUpload
+          value={formData.imageUrl}
+          onChange={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
+          folder="animals"
+          label="Animal Photo"
+        />
       </div>
 
       <div className="flex gap-4">

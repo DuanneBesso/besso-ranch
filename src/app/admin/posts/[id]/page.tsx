@@ -50,6 +50,7 @@ export default async function EditPostPage({
           published: post.published,
           metaTitle: post.metaTitle || '',
           metaDescription: post.metaDescription || '',
+          featuredImage: post.featuredImage || '',
         }}
       />
     </div>

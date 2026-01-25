@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import ImageUpload from './ImageUpload';
 
 interface Post {
   id?: string;
@@ -13,6 +14,7 @@ interface Post {
   published: boolean;
   metaTitle: string;
   metaDescription: string;
+  featuredImage: string;
 }
 
 const categories = [
@@ -32,6 +34,7 @@ const defaultPost: Post = {
   published: false,
   metaTitle: '',
   metaDescription: '',
+  featuredImage: '',
 };
 
 export default function PostForm({ post }: { post?: Post }) {
@@ -233,6 +236,17 @@ export default function PostForm({ post }: { post?: Post }) {
                 Cancel
               </button>
             </div>
+          </div>
+
+          {/* Featured Image */}
+          <div className="bg-white rounded-lg shadow p-6 space-y-4">
+            <h3 className="font-semibold text-gray-900">Featured Image</h3>
+            <ImageUpload
+              value={formData.featuredImage}
+              onChange={(url) => setFormData(prev => ({ ...prev, featuredImage: url }))}
+              folder="blog"
+              label=""
+            />
           </div>
 
           {/* SEO Settings */}
