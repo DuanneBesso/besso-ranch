@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useEditModeOptional } from "@/context/EditModeContext";
-import { Camera, Pencil } from "lucide-react";
+import { Pencil } from "lucide-react";
 import ImageUploadModal from "./ImageUploadModal";
 
 interface EditableImageProps {
