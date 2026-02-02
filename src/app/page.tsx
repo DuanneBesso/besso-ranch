@@ -28,13 +28,15 @@ async function getFeaturedProducts() {
 }
 
 async function getHomeSettings() {
-  // Get all settings that start with hero_ or animal_
+  // Get all settings for homepage sections
   const settings = await prisma.setting.findMany({
     where: {
       OR: [
         { key: { startsWith: 'hero_' } },
         { key: { startsWith: 'animal_' } },
         { key: { startsWith: 'animals_section_' } },
+        { key: { startsWith: 'featured_products_' } },
+        { key: { startsWith: 'introduction_' } },
       ],
     },
   });
@@ -57,7 +59,7 @@ export default async function Home() {
       <main className="pt-0">
         <Hero settings={homeSettings} />
         <Introduction />
-        <FeaturedProducts products={featuredProducts} />
+        <FeaturedProducts products={featuredProducts} settings={homeSettings} />
         <MeetTheAnimals settings={homeSettings} />
         <Newsletter />
       </main>

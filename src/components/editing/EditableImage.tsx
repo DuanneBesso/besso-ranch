@@ -18,6 +18,8 @@ interface EditableImageProps {
   // For background images
   isBackground?: boolean;
   children?: React.ReactNode;
+  // Placeholder text when no image
+  placeholderText?: string;
 }
 
 export default function EditableImage({
@@ -31,6 +33,7 @@ export default function EditableImage({
   style,
   isBackground = false,
   children,
+  placeholderText,
 }: EditableImageProps) {
   const editMode = useEditModeOptional();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -84,16 +87,25 @@ export default function EditableImage({
     );
   }
 
+  // Check if image is a placeholder or empty
+  const isPlaceholder = !displaySrc || displaySrc.includes('placeholder');
+
   // Regular image variant
   return (
     <>
       <div className={`${containerClassName} ${isEditing ? "relative" : ""}`}>
-        <img
-          src={displaySrc}
-          alt={alt}
-          className={className}
-          style={style}
-        />
+        {isPlaceholder && placeholderText ? (
+          <div className={`${className} bg-sage/20 flex items-center justify-center`}>
+            <span className="text-warm-brown/50 font-heading">{placeholderText}</span>
+          </div>
+        ) : (
+          <img
+            src={displaySrc}
+            alt={alt}
+            className={className}
+            style={style}
+          />
+        )}
 
         {/* Edit button - always visible in top-right corner during edit mode */}
         {isEditing && (
