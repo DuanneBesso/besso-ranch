@@ -27,18 +27,16 @@ async function getFeaturedProducts() {
   });
 }
 
-async function getHeroSettings() {
-  const settingKeys = [
-    'hero_background_image',
-    'hero_welcome_text',
-    'hero_title',
-    'hero_tagline',
-    'hero_location',
-    'hero_description',
-  ];
-
+async function getHomeSettings() {
+  // Get all settings that start with hero_ or animal_
   const settings = await prisma.setting.findMany({
-    where: { key: { in: settingKeys } },
+    where: {
+      OR: [
+        { key: { startsWith: 'hero_' } },
+        { key: { startsWith: 'animal_' } },
+        { key: { startsWith: 'animals_section_' } },
+      ],
+    },
   });
 
   return settings.reduce((acc, s) => {
@@ -48,19 +46,19 @@ async function getHeroSettings() {
 }
 
 export default async function Home() {
-  const [featuredProducts, heroSettings] = await Promise.all([
+  const [featuredProducts, homeSettings] = await Promise.all([
     getFeaturedProducts(),
-    getHeroSettings(),
+    getHomeSettings(),
   ]);
 
   return (
     <>
       <Header />
       <main className="pt-0">
-        <Hero settings={heroSettings} />
+        <Hero settings={homeSettings} />
         <Introduction />
         <FeaturedProducts products={featuredProducts} />
-        <MeetTheAnimals />
+        <MeetTheAnimals settings={homeSettings} />
         <Newsletter />
       </main>
       <Footer />

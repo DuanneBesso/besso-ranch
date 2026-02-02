@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useEditModeOptional } from "@/context/EditModeContext";
-import { Camera } from "lucide-react";
+import { Camera, Pencil } from "lucide-react";
 import ImageUploadModal from "./ImageUploadModal";
 
 interface EditableImageProps {
@@ -61,14 +61,14 @@ export default function EditableImage({
         >
           {children}
 
-          {/* Edit overlay for background images */}
+          {/* Edit button for background images - always visible in edit mode */}
           {isEditing && (
             <button
               onClick={() => setIsModalOpen(true)}
-              className="absolute top-4 right-4 z-20 flex items-center gap-2 px-3 py-2 bg-charcoal/80 hover:bg-charcoal text-cream rounded-lg transition-colors backdrop-blur-sm"
+              className="absolute top-4 right-4 z-20 flex items-center gap-2 px-3 py-2 bg-barn-red hover:bg-barn-red/90 text-cream rounded-lg transition-colors shadow-lg"
             >
-              <Camera className="w-4 h-4" />
-              <span className="text-sm font-medium">Change Image</span>
+              <Pencil className="w-4 h-4" />
+              <span className="text-sm font-medium">Edit Image</span>
             </button>
           )}
         </div>
@@ -87,7 +87,7 @@ export default function EditableImage({
   // Regular image variant
   return (
     <>
-      <div className={`${containerClassName} ${isEditing ? "relative group" : ""}`}>
+      <div className={`${containerClassName} ${isEditing ? "relative" : ""}`}>
         <img
           src={displaySrc}
           alt={alt}
@@ -95,22 +95,20 @@ export default function EditableImage({
           style={style}
         />
 
-        {/* Edit overlay */}
+        {/* Edit button - always visible in top-right corner during edit mode */}
         {isEditing && (
           <button
             onClick={() => setIsModalOpen(true)}
-            className="absolute inset-0 flex items-center justify-center bg-black/0 hover:bg-black/50 transition-colors group"
+            className="absolute top-2 right-2 z-20 flex items-center gap-1.5 px-2.5 py-1.5 bg-barn-red hover:bg-barn-red/90 text-cream text-sm font-medium rounded-lg transition-colors shadow-lg"
           >
-            <div className="opacity-0 group-hover:opacity-100 flex items-center gap-2 px-4 py-2 bg-charcoal/90 text-cream rounded-lg transition-opacity">
-              <Camera className="w-5 h-5" />
-              <span className="font-medium">Change Image</span>
-            </div>
+            <Pencil className="w-3.5 h-3.5" />
+            <span>Edit</span>
           </button>
         )}
 
         {/* Edit mode indicator border */}
         {isEditing && (
-          <div className="absolute inset-0 border-2 border-dashed border-barn-red/50 rounded pointer-events-none" />
+          <div className="absolute inset-0 border-2 border-barn-red/70 rounded pointer-events-none" />
         )}
       </div>
 

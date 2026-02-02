@@ -35,18 +35,9 @@ export default function EditModeToolbar() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [editMode]);
 
-  // Don't render on server
-  if (!mounted) {
+  // Don't render on server or if not admin
+  if (!mounted || !editMode?.isAdmin) {
     return null;
-  }
-
-  // If not admin, show a small debug indicator (temporary)
-  if (!editMode?.isAdmin) {
-    return (
-      <div className="fixed bottom-6 right-6 z-[9999] bg-gray-800 text-white text-xs px-3 py-2 rounded-lg opacity-50">
-        Edit Mode: Not logged in as admin
-      </div>
-    );
   }
 
   const { isEditMode, isSaving, hasUnsavedChanges, pendingChanges } = editMode;
