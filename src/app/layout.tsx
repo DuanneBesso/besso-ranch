@@ -3,7 +3,7 @@ import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import { EditModeProvider } from "@/context/EditModeContext";
 import CartDrawer from "@/components/cart/CartDrawer";
-import { EditModeToolbar } from "@/components/editing";
+import EditModeToolbar from "@/components/editing/EditModeToolbar";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://bessoranch.com"),
