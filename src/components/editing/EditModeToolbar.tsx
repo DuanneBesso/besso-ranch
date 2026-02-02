@@ -7,6 +7,13 @@ import { useState, useEffect } from "react";
 export default function EditModeToolbar() {
   const editMode = useEditModeOptional();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Track if component mounted (client-side only)
+  useEffect(() => {
+    setMounted(true);
+    console.log("[EditModeToolbar] Mounted, isAdmin:", editMode?.isAdmin);
+  }, [editMode?.isAdmin]);
 
   // Keyboard shortcut for save (Ctrl+S)
   useEffect(() => {
@@ -27,6 +34,11 @@ export default function EditModeToolbar() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [editMode]);
+
+  // Don't render on server
+  if (!mounted) {
+    return null;
+  }
 
   // Don't render if not admin or context not available
   if (!editMode?.isAdmin) {
