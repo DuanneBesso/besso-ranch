@@ -27,14 +27,37 @@ async function getFeaturedProducts() {
   });
 }
 
+async function getHeroSettings() {
+  const settingKeys = [
+    'hero_background_image',
+    'hero_welcome_text',
+    'hero_title',
+    'hero_tagline',
+    'hero_location',
+    'hero_description',
+  ];
+
+  const settings = await prisma.setting.findMany({
+    where: { key: { in: settingKeys } },
+  });
+
+  return settings.reduce((acc, s) => {
+    acc[s.key] = s.value;
+    return acc;
+  }, {} as Record<string, string>);
+}
+
 export default async function Home() {
-  const featuredProducts = await getFeaturedProducts();
+  const [featuredProducts, heroSettings] = await Promise.all([
+    getFeaturedProducts(),
+    getHeroSettings(),
+  ]);
 
   return (
     <>
       <Header />
       <main className="pt-0">
-        <Hero />
+        <Hero settings={heroSettings} />
         <Introduction />
         <FeaturedProducts products={featuredProducts} />
         <MeetTheAnimals />

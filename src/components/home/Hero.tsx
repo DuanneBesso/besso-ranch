@@ -3,15 +3,52 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { EditableText, EditableImage } from "@/components/editing";
 
-export default function Hero() {
+interface HeroSettings {
+  hero_background_image?: string;
+  hero_welcome_text?: string;
+  hero_title?: string;
+  hero_tagline?: string;
+  hero_location?: string;
+  hero_description?: string;
+}
+
+interface HeroProps {
+  settings?: HeroSettings;
+}
+
+// Default values for when settings haven't been configured
+const defaults: HeroSettings = {
+  hero_background_image: "/images/hero-placeholder.jpg",
+  hero_welcome_text: "Welcome to",
+  hero_title: "Besso Ranch",
+  hero_tagline: "Regenerative Agriculture, Naturally",
+  hero_location: "Yucca Valley, California",
+  hero_description:
+    "Experience the difference of truly sustainable farming. Farm fresh eggs, live poultry, and handcrafted goat milk products from our family to yours.",
+};
+
+export default function Hero({ settings = {} }: HeroProps) {
+  // Merge defaults with provided settings
+  const content = { ...defaults, ...settings };
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image Placeholder */}
-      <div className="absolute inset-0 bg-gradient-to-br from-warm-brown/90 via-warm-brown/70 to-forest-green/80">
-        {/* When you have actual images, replace this with Image component */}
-        <div className="absolute inset-0 bg-[url('/images/hero-placeholder.jpg')] bg-cover bg-center opacity-40" />
-      </div>
+      {/* Background Image */}
+      <EditableImage
+        src={content.hero_background_image!}
+        alt="Besso Ranch background"
+        contentType="setting"
+        contentId="hero_background_image"
+        contentField="value"
+        isBackground
+        containerClassName="absolute inset-0 bg-gradient-to-br from-warm-brown/90 via-warm-brown/70 to-forest-green/80 bg-cover bg-center"
+        style={{ backgroundBlendMode: "overlay" }}
+      >
+        {/* Overlay gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-warm-brown/90 via-warm-brown/70 to-forest-green/80" />
+      </EditableImage>
 
       {/* Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -35,35 +72,62 @@ export default function Hero() {
           transition={{ duration: 0.8 }}
         >
           {/* Handwritten Accent */}
-          <motion.p
-            className="font-accent text-soft-gold text-2xl md:text-3xl mb-4"
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
           >
-            Welcome to
-          </motion.p>
+            <EditableText
+              value={content.hero_welcome_text!}
+              contentType="setting"
+              contentId="hero_welcome_text"
+              contentField="value"
+              as="p"
+              className="font-accent text-soft-gold text-2xl md:text-3xl mb-4"
+            />
+          </motion.div>
 
           {/* Main Title */}
-          <h1 className="font-display text-5xl md:text-7xl lg:text-8xl text-cream mb-6">
-            Besso Ranch
-          </h1>
+          <EditableText
+            value={content.hero_title!}
+            contentType="setting"
+            contentId="hero_title"
+            contentField="value"
+            as="h1"
+            className="font-display text-5xl md:text-7xl lg:text-8xl text-cream mb-6"
+          />
 
           {/* Tagline */}
-          <p className="font-heading text-xl md:text-2xl text-cream/90 mb-4 max-w-2xl mx-auto">
-            Regenerative Agriculture, Naturally
-          </p>
+          <EditableText
+            value={content.hero_tagline!}
+            contentType="setting"
+            contentId="hero_tagline"
+            contentField="value"
+            as="p"
+            className="font-heading text-xl md:text-2xl text-cream/90 mb-4 max-w-2xl mx-auto"
+          />
 
           {/* Location */}
-          <p className="text-cream/70 text-lg mb-8">
-            Yucca Valley, California
-          </p>
+          <EditableText
+            value={content.hero_location!}
+            contentType="setting"
+            contentId="hero_location"
+            contentField="value"
+            as="p"
+            className="text-cream/70 text-lg mb-8"
+          />
 
           {/* Description */}
-          <p className="text-cream/80 max-w-xl mx-auto mb-10 leading-relaxed">
-            Experience the difference of truly sustainable farming. Farm fresh eggs,
-            live poultry, and handcrafted goat milk products from our family to yours.
-          </p>
+          <EditableText
+            value={content.hero_description!}
+            contentType="setting"
+            contentId="hero_description"
+            contentField="value"
+            as="p"
+            className="text-cream/80 max-w-xl mx-auto mb-10 leading-relaxed"
+            multiline
+            useModal
+          />
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
