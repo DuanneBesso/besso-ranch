@@ -7,13 +7,8 @@ import { WANDERING_ANIMALS } from "./constants";
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
-// Wandering animals only — chick hatching is click-triggered only
-const animalFiles = [
-  "/animations/rooster.json",
-  "/animations/goat.json",
-  "/animations/goose.json",
-  "/animations/ducks.json",
-];
+// Only the rooster walks across the screen
+const ROOSTER_FILE = "/animations/rooster.json";
 
 interface WanderingAnimalProps {
   onComplete: () => void;
@@ -23,21 +18,20 @@ export default function WanderingAnimal({ onComplete }: WanderingAnimalProps) {
   const [animationData, setAnimationData] = useState<object | null>(null);
 
   const config = useMemo(() => {
-    const animalIndex = Math.floor(Math.random() * animalFiles.length);
     const goingRight = Math.random() > 0.5;
     const duration =
       WANDERING_ANIMALS.WALK_DURATION_MIN +
       Math.random() * (WANDERING_ANIMALS.WALK_DURATION_MAX - WANDERING_ANIMALS.WALK_DURATION_MIN);
 
-    return { animalIndex, goingRight, duration };
+    return { goingRight, duration };
   }, []);
 
   useEffect(() => {
-    fetch(animalFiles[config.animalIndex])
+    fetch(ROOSTER_FILE)
       .then((res) => res.json())
       .then(setAnimationData)
       .catch(() => {});
-  }, [config.animalIndex]);
+  }, []);
 
   if (!animationData) return null;
 

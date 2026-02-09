@@ -1,15 +1,20 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { AnimatePresence } from "framer-motion";
 import { WANDERING_ANIMALS } from "./constants";
 import { useReducedMotion } from "./hooks";
 import WanderingAnimal from "./WanderingAnimal";
+import GrazingGoat from "./GrazingGoat";
+
+type AnimalType = "rooster" | "goat";
 
 export default function FarmAnimals() {
   const prefersReduced = useReducedMotion();
-  const [showAnimal, setShowAnimal] = useState(false);
+  const [activeAnimal, setActiveAnimal] = useState<AnimalType | null>(null);
   const [animalKey, setAnimalKey] = useState(0);
-  const [isMobile, setIsMobile] = useState(true); // default to true to avoid flash on SSR
+  const [isMobile, setIsMobile] = useState(true);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>();
 
   useEffect(() => {
     const checkWidth = () => {
@@ -21,33 +26,43 @@ export default function FarmAnimals() {
   }, []);
 
   const scheduleNext = useCallback(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+
     const delay =
       WANDERING_ANIMALS.MIN_INTERVAL +
       Math.random() * (WANDERING_ANIMALS.MAX_INTERVAL - WANDERING_ANIMALS.MIN_INTERVAL);
 
-    const timer = setTimeout(() => {
+    timerRef.current = setTimeout(() => {
+      // Randomly pick rooster (walks) or goat (grazes)
+      const pick: AnimalType = Math.random() > 0.5 ? "rooster" : "goat";
       setAnimalKey((k) => k + 1);
-      setShowAnimal(true);
+      setActiveAnimal(pick);
     }, delay);
-
-    return timer;
   }, []);
 
   useEffect(() => {
     if (prefersReduced || isMobile) return;
-
-    const timer = scheduleNext();
-    return () => clearTimeout(timer);
+    scheduleNext();
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
   }, [prefersReduced, isMobile, scheduleNext]);
 
   const handleComplete = useCallback(() => {
-    setShowAnimal(false);
-    // Schedule the next animal after the current one finishes
-    const timer = scheduleNext();
-    return () => clearTimeout(timer);
+    setActiveAnimal(null);
+    scheduleNext();
   }, [scheduleNext]);
 
-  if (prefersReduced || isMobile || !showAnimal) return null;
+  if (prefersReduced || isMobile) return null;
 
-  return <WanderingAnimal key={animalKey} onComplete={handleComplete} />;
+  return (
+    <AnimatePresence>
+      {activeAnimal === "rooster" && (
+        <WanderingAnimal key={`rooster-${animalKey}`} onComplete={handleComplete} />
+      )}
+      {activeAnimal === "goat" && (
+        <GrazingGoat key={`goat-${animalKey}`} onComplete={handleComplete} />
+      )}
+    </AnimatePresence>
+  );
 }
