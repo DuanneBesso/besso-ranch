@@ -11,6 +11,8 @@ const animalFiles = [
   "/animations/rooster.json",
   "/animations/goat.json",
   "/animations/chick-hatching.json",
+  "/animations/goose.json",
+  "/animations/ducks.json",
 ];
 
 interface WanderingAnimalProps {
