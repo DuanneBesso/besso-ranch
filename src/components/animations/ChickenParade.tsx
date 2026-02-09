@@ -1,19 +1,32 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { EASTER_EGGS } from "./constants";
-import { ChickenSilhouette } from "./AnimalSilhouettes";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 export default function ChickenParade() {
+  const [animationData, setAnimationData] = useState<object | null>(null);
+
+  useEffect(() => {
+    fetch("/animations/rooster.json")
+      .then((res) => res.json())
+      .then(setAnimationData)
+      .catch(() => {});
+  }, []);
+
   const chickens = useMemo(() => {
     return Array.from({ length: EASTER_EGGS.PARADE_CHICKEN_COUNT }, (_, i) => ({
       id: i,
       delay: i * 0.4,
-      y: Math.random() * 8, // slight vertical variation
-      size: 0.7 + Math.random() * 0.5, // size variation
+      y: Math.random() * 8,
+      size: 0.7 + Math.random() * 0.5,
     }));
   }, []);
+
+  if (!animationData) return null;
 
   return (
     <div className="fixed inset-0 pointer-events-none z-50">
@@ -23,28 +36,22 @@ export default function ChickenParade() {
           className="absolute"
           style={{
             bottom: 20 + chicken.y,
-            color: "#8B2500", // barn-red
-            opacity: 0.7,
+            opacity: 0.85,
             scale: chicken.size,
           }}
-          initial={{ x: -80 }}
-          animate={{ x: window.innerWidth + 80 }}
+          initial={{ x: -100 }}
+          animate={{ x: window.innerWidth + 100 }}
           transition={{
             duration: EASTER_EGGS.PARADE_DURATION,
             delay: chicken.delay,
             ease: "linear",
           }}
         >
-          <motion.div
-            animate={{ y: [0, -6, 0] }}
-            transition={{
-              duration: 0.4,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          >
-            <ChickenSilhouette />
-          </motion.div>
+          <Lottie
+            animationData={animationData}
+            loop
+            style={{ width: 80, height: 80 }}
+          />
         </motion.div>
       ))}
     </div>

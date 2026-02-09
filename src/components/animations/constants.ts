@@ -5,10 +5,10 @@ export const WANDERING_ANIMALS = {
   /** How often a new animal appears (ms) */
   MIN_INTERVAL: 30000,
   MAX_INTERVAL: 60000,
-  /** Size of animal silhouettes (px) */
-  SIZE: 60,
-  /** Opacity of silhouettes */
-  OPACITY: 0.3,
+  /** Size of animal animations (px) */
+  SIZE: 100,
+  /** Opacity of animals */
+  OPACITY: 0.6,
   /** How long the walk animation takes (seconds) */
   WALK_DURATION_MIN: 12,
   WALK_DURATION_MAX: 20,
