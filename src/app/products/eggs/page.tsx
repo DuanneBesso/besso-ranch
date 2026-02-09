@@ -145,9 +145,10 @@ export default function EggsPage() {
         <div className="container-custom">
           <div className="max-w-3xl mx-auto">
             <h2 className="section-title text-center mb-8">Why Our Eggs Are Different</h2>
-            <div className="grid sm:grid-cols-3 gap-6 text-center">
+            <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6 text-center">
               {[
                 { title: "Free Range", desc: "Our birds roam freely, foraging for bugs and greens" },
+                { title: "Organic", desc: "Fed certified organic feed with no synthetic pesticides or GMOs" },
                 { title: "No Antibiotics", desc: "Raised naturally without medications" },
                 { title: "Fresh Daily", desc: "Eggs collected and packaged the same day" },
               ].map((item) => (
