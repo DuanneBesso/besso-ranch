@@ -3,6 +3,7 @@
 import { useKonamiCode, useReducedMotion } from "./hooks";
 import ChickenParade from "./ChickenParade";
 import EggConfetti from "./EggConfetti";
+import ChickHatch from "./ChickHatch";
 
 interface EasterEggManagerProps {
   confettiActive: boolean;
@@ -18,6 +19,7 @@ export default function EasterEggManager({ confettiActive }: EasterEggManagerPro
     <>
       {konamiActivated && <ChickenParade />}
       <EggConfetti active={confettiActive} />
+      <ChickHatch />
     </>
   );
 }
