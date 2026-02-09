@@ -163,6 +163,7 @@ export default function PoultryPage() {
             <h2 className="section-title text-center mb-8">Before You Buy</h2>
             <div className="space-y-4">
               {[
+                { title: "Organic & Natural", desc: "All our birds are raised on certified organic feed with no antibiotics, hormones, or synthetic medications — only organic natural remedies." },
                 { title: "Housing Required", desc: "Ensure you have appropriate housing before purchasing. We're happy to advise on coop requirements." },
                 { title: "Local Laws", desc: "Check your local ordinances regarding keeping poultry. Some areas have restrictions on roosters or flock sizes." },
                 { title: "Commitment", desc: "Chickens can live 8-10 years. Ensure you're prepared for long-term care." },

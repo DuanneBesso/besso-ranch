@@ -173,8 +173,9 @@ export default function GoatMilkPage() {
               Goat milk has been used for skincare for thousands of years, and for good reason.
               It&apos;s naturally rich in vitamins, minerals, and fatty acids that nourish and protect your skin.
             </p>
-            <div className="grid sm:grid-cols-3 gap-6">
+            <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
               {[
+                { title: "Organic & Natural", desc: "Our goats are fed certified organic feed with no antibiotics or hormones — only organic natural remedies" },
                 { title: "Gentle & Nourishing", desc: "The proteins in goat milk are smaller and easier for skin to absorb" },
                 { title: "Natural Exfoliation", desc: "Lactic acid gently removes dead skin cells" },
                 { title: "pH Balanced", desc: "Similar to human skin's natural pH level" },
