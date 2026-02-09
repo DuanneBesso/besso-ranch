@@ -54,8 +54,15 @@ export default function AboutPageClient({ settings }: AboutPageClientProps) {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative py-20 bg-warm-brown">
-        <div className="container-custom text-center">
+      <section className="relative py-20 overflow-hidden">
+        {/* Background Image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${settings.about_hero_image || '/images/hero-about.jpg'})` }}
+        />
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-warm-brown/90 via-warm-brown/75 to-forest-green/80" />
+        <div className="container-custom text-center relative z-10">
           <EditableText
             value={heroAccent}
             contentType="setting"

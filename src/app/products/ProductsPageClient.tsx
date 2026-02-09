@@ -48,8 +48,15 @@ export default function ProductsPageClient({ products, settings }: ProductsPageC
   return (
     <>
       {/* Hero Section */}
-      <section className="relative py-16 bg-warm-brown">
-        <div className="container-custom text-center">
+      <section className="relative py-16 overflow-hidden">
+        {/* Background Image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${settings.products_hero_image || '/images/hero-products.jpg'})` }}
+        />
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-warm-brown/90 via-warm-brown/75 to-forest-green/80" />
+        <div className="container-custom text-center relative z-10">
           <div>
             <EditableText
               value={heroAccent}
