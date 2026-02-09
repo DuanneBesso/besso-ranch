@@ -7,10 +7,10 @@ import { WANDERING_ANIMALS } from "./constants";
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
+// Wandering animals only — chick hatching is click-triggered only
 const animalFiles = [
   "/animations/rooster.json",
   "/animations/goat.json",
-  "/animations/chick-hatching.json",
   "/animations/goose.json",
   "/animations/ducks.json",
 ];
@@ -41,6 +41,8 @@ export default function WanderingAnimal({ onComplete }: WanderingAnimalProps) {
 
   if (!animationData) return null;
 
+  // Lottie animations face right by default.
+  // Going right = no flip (scaleX: 1). Going left = flip (scaleX: -1).
   return (
     <motion.div
       className="fixed pointer-events-none z-40"
