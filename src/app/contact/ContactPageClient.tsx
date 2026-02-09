@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, Send, CheckCircle, CalendarClock } from "lucide-react";
 import { EditableText, EditableImage } from "@/components/editing";
 
 interface ContactPageClientProps {
@@ -34,6 +34,9 @@ export default function ContactPageClient({ settings }: ContactPageClientProps) 
   const pickupTitle = settings.contact_pickup_title || "Pickup & Delivery";
   const pickupText = settings.contact_pickup_text || "We offer free pickup at our ranch in Yucca Valley. Delivery is available within a 25-mile radius for a small fee.";
   const pickupHours = settings.contact_pickup_hours || "Pickup Hours: By appointment, typically available Wednesday-Sunday, 9am-5pm.";
+
+  // Scheduling
+  const schedulingUrl = settings.pickup_scheduling_url || "https://calendar.app.google/XVpedUgECpiEAdRL7";
 
   // FAQ section
   const faqTitle = settings.contact_faq_title || "Frequently Asked Questions";
@@ -339,10 +342,19 @@ export default function ContactPageClient({ settings }: ContactPageClientProps) 
                   contentId="contact_pickup_hours"
                   contentField="value"
                   as="p"
-                  className="text-charcoal-400 text-sm"
+                  className="text-charcoal-400 text-sm mb-4"
                   multiline
                   useModal
                 />
+                <a
+                  href={schedulingUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-barn-red text-white px-5 py-2.5 rounded-lg font-medium hover:bg-barn-red/90 transition-colors text-sm"
+                >
+                  <CalendarClock className="w-4 h-4" />
+                  Schedule a Visit
+                </a>
               </div>
             </motion.div>
           </div>
