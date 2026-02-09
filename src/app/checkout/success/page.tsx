@@ -1,21 +1,39 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import Link from 'next/link';
-import { CheckCircle, Package, Mail, ArrowRight } from 'lucide-react';
+import { CheckCircle, Package, Mail, ArrowRight, CalendarClock } from 'lucide-react';
 import { Suspense } from 'react';
+
+const DEFAULT_SCHEDULING_URL = 'https://calendar.app.google/XVpedUgECpiEAdRL7';
 
 function SuccessContent() {
   const searchParams = useSearchParams();
   const orderNumber = searchParams.get('order');
+  const deliveryMethod = searchParams.get('method');
   const { clearCart } = useCart();
+  const [schedulingUrl, setSchedulingUrl] = useState(DEFAULT_SCHEDULING_URL);
 
   // Clear cart on successful payment
   useEffect(() => {
     clearCart();
   }, [clearCart]);
+
+  // Fetch scheduling URL from settings (allows admin to update it)
+  useEffect(() => {
+    fetch('/api/settings/public')
+      .then((res) => res.json())
+      .then((settings: Record<string, string>) => {
+        if (settings.pickup_scheduling_url) {
+          setSchedulingUrl(settings.pickup_scheduling_url);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const isPickup = deliveryMethod === 'pickup';
 
   return (
     <div className="min-h-screen bg-cream py-12">
@@ -59,10 +77,32 @@ function SuccessContent() {
                     </p>
                   </div>
                 </div>
+                {isPickup && (
+                  <div className="flex gap-3">
+                    <CalendarClock className="h-5 w-5 text-forest-green flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-medium">Schedule Your Pickup</p>
+                      <p className="text-sm text-gray-600">
+                        Choose a convenient time to pick up your order at the ranch.
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
             <div className="space-y-3">
+              {isPickup && (
+                <a
+                  href={schedulingUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full bg-barn-red text-white py-3 rounded-lg font-medium hover:bg-barn-red/90 transition-colors"
+                >
+                  <CalendarClock className="h-5 w-5" />
+                  Schedule Your Pickup
+                </a>
+              )}
               <Link
                 href="/products"
                 className="flex items-center justify-center gap-2 w-full bg-forest-green text-white py-3 rounded-lg font-medium hover:bg-forest-green-600 transition-colors"

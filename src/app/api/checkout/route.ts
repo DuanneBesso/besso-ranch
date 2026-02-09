@@ -176,7 +176,7 @@ export async function POST(request: NextRequest) {
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
-      success_url: `${baseUrl}/checkout/success?order=${order.orderNumber}`,
+      success_url: `${baseUrl}/checkout/success?order=${order.orderNumber}&method=${body.deliveryMethod}`,
       cancel_url: `${baseUrl}/checkout/cancel?order=${order.orderNumber}`,
       customer_email: body.customerEmail,
       metadata: {

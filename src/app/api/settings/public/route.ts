@@ -6,6 +6,7 @@ const PUBLIC_SETTING_KEYS = [
   'site_logo',
   'site_name',
   'site_tagline',
+  'pickup_scheduling_url',
 ];
 
 export async function GET() {
