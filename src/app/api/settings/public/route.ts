@@ -7,6 +7,7 @@ const PUBLIC_SETTING_KEYS = [
   'site_name',
   'site_tagline',
   'pickup_scheduling_url',
+  'tour_scheduling_url',
 ];
 
 export async function GET() {

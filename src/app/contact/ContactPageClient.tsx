@@ -36,7 +36,7 @@ export default function ContactPageClient({ settings }: ContactPageClientProps) 
   const pickupHours = settings.contact_pickup_hours || "Pickup Hours: By appointment, typically available Wednesday-Sunday, 9am-5pm.";
 
   // Scheduling
-  const schedulingUrl = settings.pickup_scheduling_url || "https://calendar.app.google/XVpedUgECpiEAdRL7";
+  const tourSchedulingUrl = settings.tour_scheduling_url || "https://calendar.app.google/3MwDSh75yiTXbLwR9";
 
   // FAQ section
   const faqTitle = settings.contact_faq_title || "Frequently Asked Questions";
@@ -347,7 +347,7 @@ export default function ContactPageClient({ settings }: ContactPageClientProps) 
                   useModal
                 />
                 <a
-                  href={schedulingUrl}
+                  href={tourSchedulingUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 bg-barn-red text-white px-5 py-2.5 rounded-lg font-medium hover:bg-barn-red/90 transition-colors text-sm"
