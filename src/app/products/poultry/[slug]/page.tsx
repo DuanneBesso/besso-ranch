@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import prisma from "@/lib/db";
 import ProductDetail from "@/components/products/ProductDetail";
+import { productJsonLd, breadcrumbJsonLd } from "@/lib/structured-data";
 
 export const dynamic = "force-dynamic";
 
@@ -43,5 +44,23 @@ export default async function PoultryDetailPage({ params }: { params: Promise<{ 
     notFound();
   }
 
-  return <ProductDetail product={product} />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd(product)) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd([
+            { name: 'Home', url: '/' },
+            { name: 'Live Poultry', url: '/products/poultry' },
+            { name: product.name, url: `/products/poultry/${product.slug}` },
+          ])),
+        }}
+      />
+      <ProductDetail product={product} />
+    </>
+  );
 }

@@ -1,5 +1,11 @@
+import { Metadata } from "next";
 import prisma from "@/lib/db";
 import OurPracticesClient from "./OurPracticesClient";
+
+export const metadata: Metadata = {
+  title: "Our Practices | Besso Ranch",
+  description: "Learn about Besso Ranch's sustainable farming practices - free-range care, natural feeding, and ethical animal husbandry in Yucca Valley, CA.",
+};
 
 export const dynamic = 'force-dynamic';
 

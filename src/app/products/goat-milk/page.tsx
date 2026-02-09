@@ -1,5 +1,6 @@
 import prisma from "@/lib/db";
 import GoatMilkPageClient from "./GoatMilkPageClient";
+import { breadcrumbJsonLd } from "@/lib/structured-data";
 
 export const dynamic = "force-dynamic";
 
@@ -31,5 +32,19 @@ async function getGoatMilkProducts() {
 
 export default async function GoatMilkPage() {
   const products = await getGoatMilkProducts();
-  return <GoatMilkPageClient products={products} />;
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd([
+            { name: 'Home', url: '/' },
+            { name: 'Goat Milk Products', url: '/products/goat-milk' },
+          ])),
+        }}
+      />
+      <GoatMilkPageClient products={products} />
+    </>
+  );
 }

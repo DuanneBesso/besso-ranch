@@ -1,5 +1,6 @@
 import prisma from "@/lib/db";
 import PoultryPageClient from "./PoultryPageClient";
+import { breadcrumbJsonLd } from "@/lib/structured-data";
 
 export const dynamic = "force-dynamic";
 
@@ -31,5 +32,19 @@ async function getPoultry() {
 
 export default async function PoultryPage() {
   const products = await getPoultry();
-  return <PoultryPageClient products={products} />;
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd([
+            { name: 'Home', url: '/' },
+            { name: 'Live Poultry', url: '/products/poultry' },
+          ])),
+        }}
+      />
+      <PoultryPageClient products={products} />
+    </>
+  );
 }

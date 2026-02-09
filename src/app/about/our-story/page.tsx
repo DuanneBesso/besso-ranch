@@ -1,5 +1,11 @@
+import { Metadata } from "next";
 import prisma from "@/lib/db";
 import OurStoryClient from "./OurStoryClient";
+
+export const metadata: Metadata = {
+  title: "Our Story | Besso Ranch",
+  description: "How Besso Ranch in Yucca Valley, CA grew from a dream into a thriving sustainable family farm raising poultry and goats in the high desert.",
+};
 
 export const dynamic = 'force-dynamic';
 

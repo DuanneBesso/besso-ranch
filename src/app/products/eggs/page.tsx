@@ -1,5 +1,6 @@
 import prisma from "@/lib/db";
 import EggsPageClient from "./EggsPageClient";
+import { breadcrumbJsonLd } from "@/lib/structured-data";
 
 export const dynamic = "force-dynamic";
 
@@ -31,5 +32,19 @@ async function getEggs() {
 
 export default async function EggsPage() {
   const products = await getEggs();
-  return <EggsPageClient products={products} />;
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd([
+            { name: 'Home', url: '/' },
+            { name: 'Farm Fresh Eggs', url: '/products/eggs' },
+          ])),
+        }}
+      />
+      <EggsPageClient products={products} />
+    </>
+  );
 }

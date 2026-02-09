@@ -1,6 +1,7 @@
 import { Header, Footer } from "@/components/layout";
 import { Hero, Introduction, FeaturedProducts, MeetTheAnimals, Newsletter } from "@/components/home";
 import prisma from "@/lib/db";
+import { localBusinessJsonLd } from "@/lib/structured-data";
 
 export const dynamic = 'force-dynamic';
 
@@ -54,6 +55,10 @@ export default async function Home() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd()) }}
+      />
       <Header />
       <main className="pt-0">
         <Hero settings={homeSettings} />
