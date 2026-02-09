@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { EditableText, EditableImage } from "@/components/editing";
+import NatureParticles from "@/components/animations/NatureParticles";
 
 interface HeroSettings {
   hero_background_image?: string;
@@ -62,6 +63,8 @@ export default function Hero({ settings = {} }: HeroProps) {
           animate={{ y: [0, 20, 0] }}
           transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
         />
+        {/* Floating dust motes / dandelion seeds */}
+        <NatureParticles />
       </div>
 
       {/* Content */}

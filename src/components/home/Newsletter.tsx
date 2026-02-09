@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Send, CheckCircle } from "lucide-react";
+import FireflyGlows from "@/components/animations/FireflyGlows";
 
 export default function Newsletter() {
   const [email, setEmail] = useState("");
@@ -24,6 +25,8 @@ export default function Newsletter() {
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-0 w-64 h-64 bg-sage/20 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-barn-red/10 rounded-full translate-x-1/2 translate-y-1/2 blur-3xl" />
+        {/* Firefly glows */}
+        <FireflyGlows />
       </div>
 
       <div className="container-custom relative z-10">

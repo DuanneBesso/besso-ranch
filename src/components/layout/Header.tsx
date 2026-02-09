@@ -6,6 +6,7 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ChevronDown } from "lucide-react";
 import CartButton from "@/components/cart/CartButton";
+import { useAnimationContext } from "@/components/animations/AnimationLayer";
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -36,6 +37,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [logoUrl, setLogoUrl] = useState("/images/logo.png");
+  const { onLogoClick } = useAnimationContext();
 
   useEffect(() => {
     fetch("/api/settings/public")
@@ -59,6 +61,9 @@ export default function Header() {
               height={48}
               className="w-12 h-12 rounded-full object-cover"
               priority
+              onClick={() => {
+                onLogoClick();
+              }}
             />
             <div className="hidden sm:block">
               <span className="font-display text-2xl text-warm-brown">Besso Ranch</span>

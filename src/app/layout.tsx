@@ -4,6 +4,7 @@ import { CartProvider } from "@/context/CartContext";
 import { EditModeProvider } from "@/context/EditModeContext";
 import CartDrawer from "@/components/cart/CartDrawer";
 import EditModeToolbar from "@/components/editing/EditModeToolbar";
+import AnimationLayer from "@/components/animations/AnimationLayer";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://bessoranch.com"),
@@ -74,7 +75,9 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col">
         <EditModeProvider>
           <CartProvider>
-            {children}
+            <AnimationLayer>
+              {children}
+            </AnimationLayer>
             <CartDrawer />
           </CartProvider>
           <EditModeToolbar />
