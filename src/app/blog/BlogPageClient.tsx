@@ -45,8 +45,15 @@ export default function BlogPageClient({ posts, settings }: BlogPageClientProps)
   return (
     <>
       {/* Hero Section */}
-      <section className="relative py-16 bg-forest-green">
-        <div className="container-custom text-center">
+      <section className="relative py-16 overflow-hidden">
+        {/* Background Image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${settings.blog_hero_image || '/images/hero-blog.jpg'})` }}
+        />
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-forest-green/90 via-forest-green/75 to-warm-brown/80" />
+        <div className="container-custom text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
