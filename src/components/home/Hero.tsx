@@ -20,7 +20,7 @@ interface HeroProps {
 
 // Default values for when settings haven't been configured
 const defaults: HeroSettings = {
-  hero_background_image: "/images/hero-placeholder.jpg",
+  hero_background_image: "/images/hero-yucca-valley.jpg",
   hero_welcome_text: "Welcome to",
   hero_title: "Besso Ranch",
   hero_tagline: "Regenerative Agriculture, Naturally",
