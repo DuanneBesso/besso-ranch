@@ -10,10 +10,10 @@ interface OurStoryClientProps {
 
 const defaultTimeline = [
   { year: "2020", title: "The Dream Begins", description: "Our family started with a vision of sustainable living and a small flock of chickens in our backyard." },
-  { year: "2021", title: "Growing the Flock", description: "We expanded to include ducks, turkeys, and geese, learning the art of poultry husbandry." },
   { year: "2022", title: "Welcome the Goats", description: "Our Nigerian Dwarf goats joined the family, opening doors to dairy products." },
-  { year: "2023", title: "Besso Ranch is Born", description: "We officially launched Besso Ranch, sharing our products with the local community." },
-  { year: "2024", title: "Expanding Horizons", description: "Introduced goat milk soaps, lotions, and expanded our egg varieties." },
+  { year: "2024", title: "Growing the Flock", description: "We expanded to include ducks, turkeys, and geese, learning the art of poultry husbandry." },
+  { year: "2025", title: "Besso Ranch is Born", description: "We officially launched Besso Ranch, sharing our products with the local community." },
+  { year: "2026", title: "Expanding Horizons", description: "Introduced goat milk soaps, lotions, and expanded our egg varieties." },
 ];
 
 const defaultValues = [
