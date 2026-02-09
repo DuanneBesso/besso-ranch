@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
-import { Upload, X, Loader2, Camera, Image as ImageIcon, RefreshCw, Check } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Upload, X, Loader2, Check } from "lucide-react";
 
 interface ImageUploadModalProps {
   isOpen: boolean;
@@ -21,393 +21,230 @@ export default function ImageUploadModal({
   currentImage,
   title = "Upload Image",
 }: ImageUploadModalProps) {
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const [status, setStatus] = useState<"idle" | "uploading" | "success" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
-  const [dragActive, setDragActive] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [uploadSuccess, setUploadSuccess] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const cameraInputRef = useRef<HTMLInputElement>(null);
-  const modalRef = useRef<HTMLDivElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
-  // Reset state when modal opens/closes
+  // Reset when modal closes
   useEffect(() => {
     if (!isOpen) {
-      // Delay reset to allow close animation
-      const timer = setTimeout(() => {
-        setPreview(null);
-        setSelectedFile(null);
-        setError(null);
-        setUploadProgress(0);
-        setUploadSuccess(false);
-        setIsUploading(false);
-      }, 200);
-      return () => clearTimeout(timer);
+      // Abort any ongoing upload
+      abortRef.current?.abort();
+      // Reset all state
+      setStatus("idle");
+      setError(null);
+      setPreview(null);
+      setSelectedFile(null);
     }
   }, [isOpen]);
 
-  // Close on escape key
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && !isUploading) {
-        onClose();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, isUploading, onClose]);
-
-  // Prevent body scroll when modal is open
+  // Lock body scroll when open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
     }
     return () => {
       document.body.style.overflow = "";
     };
   }, [isOpen]);
 
-  // Validate file before processing
-  const validateFile = useCallback((file: File): string | null => {
+  if (!isOpen) return null;
+
+  const validateAndSetFile = (file: File) => {
+    setError(null);
+    setStatus("idle");
+
     if (!ALLOWED_TYPES.includes(file.type)) {
-      return "Please select a valid image (JPEG, PNG, WebP, or GIF)";
+      setError("Please select JPEG, PNG, WebP, or GIF");
+      return;
     }
     if (file.size > MAX_FILE_SIZE) {
-      return `File is too large. Maximum size is 5MB. Your file is ${(file.size / 1024 / 1024).toFixed(1)}MB`;
-    }
-    return null;
-  }, []);
-
-  // Process selected file
-  const processFile = useCallback((file: File) => {
-    setError(null);
-    setUploadSuccess(false);
-
-    const validationError = validateFile(file);
-    if (validationError) {
-      setError(validationError);
+      setError(`File too large (max 5MB). Yours: ${(file.size / 1024 / 1024).toFixed(1)}MB`);
       return;
     }
 
     setSelectedFile(file);
-
-    // Create preview
     const reader = new FileReader();
-    reader.onload = (e) => {
-      setPreview(e.target?.result as string);
-    };
-    reader.onerror = () => {
-      setError("Failed to read file. Please try again.");
-    };
+    reader.onload = (e) => setPreview(e.target?.result as string);
     reader.readAsDataURL(file);
-  }, [validateFile]);
+  };
 
-  // Upload the file
-  const uploadFile = async () => {
-    if (!selectedFile) return;
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) validateAndSetFile(file);
+    e.target.value = "";
+  };
 
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files?.[0];
+    if (file) validateAndSetFile(file);
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile || status === "uploading") return;
+
+    setStatus("uploading");
     setError(null);
-    setIsUploading(true);
-    setUploadProgress(10);
+    abortRef.current = new AbortController();
 
     try {
       const formData = new FormData();
       formData.append("file", selectedFile);
       formData.append("folder", "inline-edits");
 
-      // Simulate progress for better UX
-      const progressInterval = setInterval(() => {
-        setUploadProgress((prev) => {
-          if (prev >= 90) {
-            clearInterval(progressInterval);
-            return prev;
-          }
-          return prev + 10;
-        });
-      }, 200);
-
       const response = await fetch("/api/admin/upload", {
         method: "POST",
         body: formData,
         credentials: "include",
+        signal: abortRef.current.signal,
       });
-
-      clearInterval(progressInterval);
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Upload failed. Please try again.");
+        throw new Error(data.error || "Upload failed");
       }
 
-      setUploadProgress(100);
-      setUploadSuccess(true);
+      setStatus("success");
 
-      // Brief delay to show success state
+      // Brief delay to show success, then close
       setTimeout(() => {
         onUpload(data.url);
         onClose();
-      }, 500);
+      }, 300);
 
     } catch (err) {
-      console.error("Upload error:", err);
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Upload failed. Please check your connection and try again."
-      );
-      setUploadProgress(0);
-    } finally {
-      setIsUploading(false);
+      if (err instanceof Error && err.name === "AbortError") return;
+      setStatus("error");
+      setError(err instanceof Error ? err.message : "Upload failed");
     }
   };
 
-  // Handle file input change
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      processFile(file);
-    }
-    // Reset input so same file can be selected again
-    e.target.value = "";
-  };
-
-  // Drag handlers
-  const handleDrag = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-
-    const file = e.dataTransfer.files?.[0];
-    if (file) {
-      processFile(file);
-    }
-  };
-
-  // Clear selection
-  const clearSelection = () => {
-    setPreview(null);
-    setSelectedFile(null);
-    setError(null);
-    setUploadProgress(0);
-  };
-
-  // Handle close
   const handleClose = () => {
-    if (!isUploading) {
+    if (status !== "uploading") {
       onClose();
     }
   };
 
-  if (!isOpen) return null;
-
   return (
     <div
-      className="fixed inset-0 z-[10000] flex items-center justify-center p-4 sm:p-6"
+      className="fixed inset-0 z-[10000] flex items-center justify-center p-4"
       onClick={handleClose}
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-black/60" />
 
       {/* Modal */}
       <div
-        ref={modalRef}
         onClick={(e) => e.stopPropagation()}
-        className="relative bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col"
+        className="relative bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-gray-200 flex-shrink-0">
-          <h3 className="text-lg font-semibold text-charcoal">{title}</h3>
+        <div className="flex items-center justify-between px-5 py-4 border-b">
+          <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
           <button
             onClick={handleClose}
-            disabled={isUploading}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors disabled:opacity-50 -mr-1"
-            aria-label="Close"
+            disabled={status === "uploading"}
+            className="p-1.5 hover:bg-gray-100 rounded-full disabled:opacity-50"
           >
             <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
 
-        {/* Scrollable Content */}
-        <div className="p-4 sm:p-6 overflow-y-auto flex-1">
-          {/* Preview area */}
+        {/* Content */}
+        <div className="p-5">
+          {/* Preview */}
           {(preview || currentImage) && (
             <div className="mb-4">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-sm text-gray-500">
-                  {preview ? "Selected image:" : "Current image:"}
-                </p>
-                {preview && !isUploading && (
-                  <button
-                    onClick={clearSelection}
-                    className="text-sm text-barn-red hover:underline"
-                  >
-                    Clear
-                  </button>
-                )}
-              </div>
-              <div className="relative w-full h-48 sm:h-56 bg-gray-100 rounded-lg overflow-hidden">
+              <p className="text-sm text-gray-500 mb-2">
+                {preview ? "New image:" : "Current image:"}
+              </p>
+              <div className="relative w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
                 <img
                   src={preview || currentImage}
                   alt="Preview"
                   className="w-full h-full object-contain"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = "/images/placeholder.jpg";
-                  }}
                 />
-                {isUploading && (
-                  <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center">
-                    {uploadSuccess ? (
-                      <Check className="w-10 h-10 text-green-400" />
-                    ) : (
-                      <Loader2 className="w-10 h-10 text-white animate-spin" />
-                    )}
-                    <p className="text-white text-sm mt-2">
-                      {uploadSuccess ? "Success!" : `Uploading... ${uploadProgress}%`}
-                    </p>
+                {status === "uploading" && (
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                    <Loader2 className="w-8 h-8 text-white animate-spin" />
+                  </div>
+                )}
+                {status === "success" && (
+                  <div className="absolute inset-0 bg-green-500/50 flex items-center justify-center">
+                    <Check className="w-8 h-8 text-white" />
                   </div>
                 )}
               </div>
             </div>
           )}
 
-          {/* Upload area - hidden when file is selected */}
+          {/* File selector (hidden when file selected) */}
           {!preview && (
             <div
-              onDragEnter={handleDrag}
-              onDragLeave={handleDrag}
-              onDragOver={handleDrag}
+              onDragOver={(e) => e.preventDefault()}
               onDrop={handleDrop}
-              className={`
-                relative border-2 border-dashed rounded-lg p-6 sm:p-8 text-center
-                transition-colors duration-200
-                ${dragActive
-                  ? "border-barn-red bg-barn-red/5"
-                  : "border-gray-300"
-                }
-              `}
+              onClick={() => fileInputRef.current?.click()}
+              className="border-2 border-dashed border-gray-300 hover:border-barn-red rounded-lg p-8 text-center cursor-pointer transition-colors"
             >
-              <div className="flex flex-col items-center">
-                <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                  {currentImage ? (
-                    <ImageIcon className="w-7 h-7 text-gray-400" />
-                  ) : (
-                    <Upload className="w-7 h-7 text-gray-400" />
-                  )}
-                </div>
-                <p className="text-sm text-gray-500 mb-4 hidden sm:block">
-                  Drag and drop an image here, or
-                </p>
-                <p className="text-sm text-gray-500 mb-4 sm:hidden">
-                  Choose an image to upload
-                </p>
-
-                {/* Button group */}
-                <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                  {/* Choose file button */}
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-barn-red text-white rounded-lg hover:bg-barn-red/90 transition-colors font-medium text-sm"
-                  >
-                    <Upload className="w-4 h-4" />
-                    Choose File
-                  </button>
-
-                  {/* Camera button - mobile only */}
-                  <button
-                    onClick={() => cameraInputRef.current?.click()}
-                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 text-charcoal rounded-lg hover:bg-gray-200 transition-colors font-medium text-sm sm:hidden"
-                  >
-                    <Camera className="w-4 h-4" />
-                    Take Photo
-                  </button>
-                </div>
-
-                <p className="text-xs text-gray-400 mt-4">
-                  JPEG, PNG, WebP, or GIF • Max 5MB
-                </p>
-              </div>
-
-              {/* Hidden file inputs */}
+              <Upload className="w-10 h-10 text-gray-400 mx-auto mb-3" />
+              <p className="text-sm text-gray-600 mb-1">
+                Click to select or drag & drop
+              </p>
+              <p className="text-xs text-gray-400">
+                JPEG, PNG, WebP, GIF (max 5MB)
+              </p>
               <input
                 ref={fileInputRef}
                 type="file"
                 accept="image/jpeg,image/png,image/webp,image/gif"
-                onChange={handleFileChange}
-                className="hidden"
-              />
-              <input
-                ref={cameraInputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/webp,image/gif"
-                capture="environment"
-                onChange={handleFileChange}
+                onChange={handleFileSelect}
                 className="hidden"
               />
             </div>
           )}
 
-          {/* Action buttons when file is selected */}
-          {preview && !isUploading && (
-            <div className="flex flex-col sm:flex-row gap-3 mt-4">
+          {/* Action buttons */}
+          {preview && status !== "uploading" && status !== "success" && (
+            <div className="flex gap-3 mt-4">
               <button
-                onClick={uploadFile}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-barn-red text-white rounded-lg hover:bg-barn-red/90 transition-colors font-medium"
+                onClick={handleUpload}
+                className="flex-1 py-2.5 bg-barn-red hover:bg-barn-red/90 text-white font-medium rounded-lg transition-colors"
               >
-                <Upload className="w-4 h-4" />
-                Upload Image
+                Upload
               </button>
               <button
-                onClick={() => fileInputRef.current?.click()}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 text-charcoal rounded-lg hover:bg-gray-200 transition-colors font-medium"
+                onClick={() => {
+                  setPreview(null);
+                  setSelectedFile(null);
+                  setError(null);
+                }}
+                className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors"
               >
-                <RefreshCw className="w-4 h-4" />
-                Choose Different
+                Change
               </button>
             </div>
           )}
 
-          {/* Error message */}
+          {/* Error */}
           {error && (
             <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
               <p className="text-sm text-red-600 text-center">{error}</p>
-              {selectedFile && (
-                <button
-                  onClick={uploadFile}
-                  className="mt-2 w-full flex items-center justify-center gap-2 px-3 py-2 bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition-colors text-sm font-medium"
-                >
-                  <RefreshCw className="w-4 h-4" />
-                  Retry Upload
-                </button>
-              )}
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="px-4 sm:px-6 py-4 bg-gray-50 border-t border-gray-200 flex-shrink-0">
+        <div className="px-5 py-4 bg-gray-50 border-t">
           <button
             onClick={handleClose}
-            disabled={isUploading}
-            className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50"
+            disabled={status === "uploading"}
+            className="w-full py-2 text-sm text-gray-600 hover:text-gray-900 disabled:opacity-50"
           >
             Cancel
           </button>

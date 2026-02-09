@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ChevronDown } from "lucide-react";
 import CartButton from "@/components/cart/CartButton";
@@ -34,6 +35,16 @@ const navigation = [
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [logoUrl, setLogoUrl] = useState("/images/logo.png");
+
+  useEffect(() => {
+    fetch("/api/settings/public")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.site_logo) setLogoUrl(data.site_logo);
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-cream/95 backdrop-blur-sm shadow-sm">
@@ -41,9 +52,14 @@ export default function Header() {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-barn-red rounded-full flex items-center justify-center">
-              <span className="text-white font-display text-xl font-bold">BR</span>
-            </div>
+            <Image
+              src={logoUrl}
+              alt="Besso Ranch Logo"
+              width={48}
+              height={48}
+              className="w-12 h-12 rounded-full object-cover"
+              priority
+            />
             <div className="hidden sm:block">
               <span className="font-display text-2xl text-warm-brown">Besso Ranch</span>
               <p className="text-xs text-charcoal-400 -mt-1">Yucca Valley, CA</p>

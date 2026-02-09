@@ -1,4 +1,8 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Mail, Phone, MapPin, Instagram, Facebook } from "lucide-react";
 
 const quickLinks = [
@@ -21,6 +25,17 @@ const legalLinks = [
 ];
 
 export default function Footer() {
+  const [logoUrl, setLogoUrl] = useState("/images/logo.png");
+
+  useEffect(() => {
+    fetch("/api/settings/public")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.site_logo) setLogoUrl(data.site_logo);
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <footer className="bg-warm-brown text-cream mt-auto">
       {/* Main Footer */}
@@ -29,9 +44,13 @@ export default function Footer() {
           {/* Brand Column */}
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center space-x-3 mb-4">
-              <div className="w-12 h-12 bg-barn-red rounded-full flex items-center justify-center">
-                <span className="text-white font-display text-xl font-bold">BR</span>
-              </div>
+              <Image
+                src={logoUrl}
+                alt="Besso Ranch Logo"
+                width={48}
+                height={48}
+                className="w-12 h-12 rounded-full object-cover"
+              />
               <div>
                 <span className="font-display text-2xl text-cream">Besso Ranch</span>
                 <p className="text-xs text-cream/70 -mt-1">Yucca Valley, CA</p>

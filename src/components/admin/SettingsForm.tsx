@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Save, Store, Mail, Truck, Bell, Clock } from 'lucide-react';
+import { Save, Store, Mail, Truck, Bell, Clock, ImageIcon } from 'lucide-react';
+import ImageUpload from './ImageUpload';
 
 interface Settings {
   [key: string]: string | number | boolean;
@@ -68,6 +69,34 @@ export default function SettingsForm({ settings }: { settings: Settings }) {
           Settings saved successfully!
         </div>
       )}
+
+      {/* Site Logo */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <div className="flex items-center gap-2 mb-6">
+          <ImageIcon className="h-5 w-5 text-forest-green" />
+          <h2 className="text-lg font-semibold text-gray-900">Site Logo</h2>
+        </div>
+
+        <p className="text-sm text-gray-500 mb-4">
+          Upload your site logo. This appears in the header, footer, and anywhere the logo is displayed.
+          Recommended: square image, at least 200x200px. PNG with transparent background works best.
+        </p>
+
+        <ImageUpload
+          value={String(formData.site_logo || '')}
+          onChange={(url) =>
+            setFormData((prev) => ({ ...prev, site_logo: url || '/images/logo.png' }))
+          }
+          folder="branding"
+          label="Logo Image"
+        />
+
+        {!formData.site_logo && (
+          <p className="mt-2 text-xs text-gray-400">
+            Currently using default logo: /images/logo.png
+          </p>
+        )}
+      </div>
 
       {/* Site Information */}
       <div className="bg-white rounded-lg shadow p-6">

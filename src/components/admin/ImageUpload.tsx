@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Upload, X, Loader2 } from "lucide-react";
 
 interface ImageUploadProps {
@@ -22,10 +22,29 @@ export default function ImageUpload({
   const [error, setError] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const isMountedRef = useRef(true);
+  const dragCounterRef = useRef(0);
+
+  // Track mounted state
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
   const handleUpload = async (file: File) => {
+    if (isUploading) return;
+
     setError(null);
     setIsUploading(true);
+
+    // Create abort controller for this upload
+    abortControllerRef.current = new AbortController();
 
     try {
       const formData = new FormData();
@@ -35,7 +54,10 @@ export default function ImageUpload({
       const response = await fetch("/api/admin/upload", {
         method: "POST",
         body: formData,
+        signal: abortControllerRef.current.signal,
       });
+
+      if (!isMountedRef.current) return;
 
       const data = await response.json();
 
@@ -43,11 +65,16 @@ export default function ImageUpload({
         throw new Error(data.error || "Upload failed");
       }
 
+      if (!isMountedRef.current) return;
       onChange(data.url);
     } catch (err) {
+      if (!isMountedRef.current) return;
+      if (err instanceof Error && err.name === 'AbortError') return;
       setError(err instanceof Error ? err.message : "Upload failed");
     } finally {
-      setIsUploading(false);
+      if (isMountedRef.current) {
+        setIsUploading(false);
+      }
     }
   };
 
@@ -56,21 +83,29 @@ export default function ImageUpload({
     if (file) {
       handleUpload(file);
     }
+    // Reset input so same file can be selected again
+    e.target.value = "";
   };
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
+
+    if (e.type === "dragenter") {
+      dragCounterRef.current++;
       setDragActive(true);
     } else if (e.type === "dragleave") {
-      setDragActive(false);
+      dragCounterRef.current--;
+      if (dragCounterRef.current === 0) {
+        setDragActive(false);
+      }
     }
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    dragCounterRef.current = 0;
     setDragActive(false);
 
     const file = e.dataTransfer.files?.[0];

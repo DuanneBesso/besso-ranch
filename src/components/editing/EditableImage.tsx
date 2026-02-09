@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useEditModeOptional } from "@/context/EditModeContext";
-import { Pencil } from "lucide-react";
+import { Pencil, ImagePlus } from "lucide-react";
 import ImageUploadModal from "./ImageUploadModal";
 
 interface EditableImageProps {
@@ -15,10 +15,8 @@ interface EditableImageProps {
   containerClassName?: string;
   style?: React.CSSProperties;
   priority?: boolean;
-  // For background images
   isBackground?: boolean;
   children?: React.ReactNode;
-  // Placeholder text when no image
   placeholderText?: string;
 }
 
@@ -38,10 +36,14 @@ export default function EditableImage({
   const editMode = useEditModeOptional();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const clickLockRef = useRef(false);
 
   const editKey = `${contentType}:${contentId}:${contentField}`;
   const editedValue = editMode?.getEditedValue(editKey);
   const displaySrc = (editedValue as string) || src;
+
+  const isEditing = editMode?.isEditMode && editMode?.isAdmin;
+  const hasImage = displaySrc && !displaySrc.includes('placeholder') && !imageError;
 
   const handleUpload = useCallback((url: string) => {
     if (editMode) {
@@ -51,24 +53,17 @@ export default function EditableImage({
     setIsModalOpen(false);
   }, [editMode, contentType, contentId, contentField, src]);
 
-  const handleOpenModal = useCallback((e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const openModal = useCallback(() => {
+    // Simple click lock to prevent double-firing
+    if (clickLockRef.current || isModalOpen) return;
+    clickLockRef.current = true;
     setIsModalOpen(true);
-  }, []);
+    setTimeout(() => { clickLockRef.current = false; }, 500);
+  }, [isModalOpen]);
 
-  const handleCloseModal = useCallback(() => {
+  const closeModal = useCallback(() => {
     setIsModalOpen(false);
   }, []);
-
-  const handleImageError = useCallback(() => {
-    setImageError(true);
-  }, []);
-
-  const isEditing = editMode?.isEditMode && editMode?.isAdmin;
-
-  // Check if image is a placeholder or empty
-  const isPlaceholder = !displaySrc || displaySrc.includes('placeholder') || imageError;
 
   // Background image variant
   if (isBackground) {
@@ -78,18 +73,16 @@ export default function EditableImage({
           className={`${containerClassName} ${isEditing ? "relative" : ""}`}
           style={{
             ...style,
-            backgroundImage: displaySrc && !imageError ? `url('${displaySrc}')` : undefined,
+            backgroundImage: hasImage ? `url('${displaySrc}')` : undefined,
           }}
         >
           {children}
 
-          {/* Edit button for background images */}
           {isEditing && (
             <button
-              onClick={handleOpenModal}
-              onTouchEnd={handleOpenModal}
-              className="absolute top-4 right-4 z-20 flex items-center gap-2 px-3 py-2.5 bg-barn-red hover:bg-barn-red/90 active:bg-barn-red/80 text-cream rounded-lg transition-colors shadow-lg touch-manipulation"
-              style={{ WebkitTapHighlightColor: 'transparent' }}
+              type="button"
+              onClick={openModal}
+              className="absolute top-4 right-4 z-50 flex items-center gap-2 px-3 py-2.5 bg-barn-red hover:bg-barn-red/90 text-cream rounded-lg shadow-lg"
             >
               <Pencil className="w-4 h-4" />
               <span className="text-sm font-medium">Edit Image</span>
@@ -97,63 +90,95 @@ export default function EditableImage({
           )}
         </div>
 
-        <ImageUploadModal
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          onUpload={handleUpload}
-          currentImage={displaySrc}
-          title="Change Background Image"
-        />
+        {isModalOpen && (
+          <ImageUploadModal
+            isOpen={isModalOpen}
+            onClose={closeModal}
+            onUpload={handleUpload}
+            currentImage={displaySrc}
+            title="Change Background Image"
+          />
+        )}
       </>
     );
   }
 
-  // Regular image variant
+  // Regular image - NOT in edit mode
+  if (!isEditing) {
+    if (!hasImage && placeholderText) {
+      return (
+        <div className={`${containerClassName}`}>
+          <div className={`${className} bg-sage/20 flex items-center justify-center`}>
+            <span className="text-warm-brown/50 font-heading text-sm">{placeholderText}</span>
+          </div>
+        </div>
+      );
+    }
+    return (
+      <div className={containerClassName}>
+        <img
+          src={displaySrc}
+          alt={alt}
+          className={className}
+          style={style}
+          onError={() => setImageError(true)}
+          loading="lazy"
+        />
+      </div>
+    );
+  }
+
+  // Regular image - IN EDIT MODE
   return (
     <>
-      <div className={`${containerClassName} ${isEditing ? "relative" : ""}`}>
-        {isPlaceholder && placeholderText ? (
-          <div className={`${className} bg-sage/20 flex items-center justify-center`}>
-            <span className="text-warm-brown/50 font-heading text-sm sm:text-base">{placeholderText}</span>
-          </div>
+      <div className={`${containerClassName} relative`}>
+        {hasImage ? (
+          // Has image - show image with edit button
+          <>
+            <img
+              src={displaySrc}
+              alt={alt}
+              className={className}
+              style={style}
+              onError={() => setImageError(true)}
+              loading="lazy"
+            />
+            <button
+              type="button"
+              onClick={openModal}
+              className="absolute top-2 right-2 z-50 flex items-center gap-1.5 px-3 py-2 bg-barn-red hover:bg-barn-red/90 text-cream text-sm font-medium rounded-lg shadow-lg min-h-[44px]"
+            >
+              <Pencil className="w-4 h-4" />
+              <span className="hidden sm:inline">Edit</span>
+            </button>
+          </>
         ) : (
-          <img
-            src={displaySrc}
-            alt={alt}
-            className={className}
-            style={style}
-            onError={handleImageError}
-            loading="lazy"
-          />
-        )}
-
-        {/* Edit button - larger touch target for mobile */}
-        {isEditing && (
+          // No image - show add button that fills the entire area
           <button
-            onClick={handleOpenModal}
-            onTouchEnd={handleOpenModal}
-            className="absolute top-2 right-2 z-20 flex items-center gap-1.5 px-3 py-2 bg-barn-red hover:bg-barn-red/90 active:bg-barn-red/80 text-cream text-sm font-medium rounded-lg transition-colors shadow-lg touch-manipulation min-h-[44px] min-w-[44px] justify-center"
-            style={{ WebkitTapHighlightColor: 'transparent' }}
-            aria-label={`Edit ${alt}`}
+            type="button"
+            onClick={openModal}
+            className={`${className} bg-warm-brown/10 hover:bg-warm-brown/20 border-2 border-dashed border-warm-brown/30 hover:border-barn-red flex flex-col items-center justify-center cursor-pointer transition-colors`}
           >
-            <Pencil className="w-4 h-4" />
-            <span className="hidden sm:inline">Edit</span>
+            <ImagePlus className="w-8 h-8 text-warm-brown/40 mb-2" />
+            <span className="text-warm-brown/60 text-sm font-medium">Add Image</span>
           </button>
         )}
 
-        {/* Edit mode indicator border */}
-        {isEditing && (
-          <div className="absolute inset-0 border-2 border-barn-red/70 rounded pointer-events-none" />
+        {/* Edit border indicator */}
+        {hasImage && (
+          <div className="absolute inset-0 border-2 border-barn-red/50 rounded pointer-events-none" />
         )}
       </div>
 
-      <ImageUploadModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        onUpload={handleUpload}
-        currentImage={displaySrc}
-        title="Replace Image"
-      />
+      {isModalOpen && (
+        <ImageUploadModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          onUpload={handleUpload}
+          currentImage={displaySrc}
+          title={hasImage ? "Replace Image" : "Add Image"}
+        />
+      )}
     </>
   );
 }

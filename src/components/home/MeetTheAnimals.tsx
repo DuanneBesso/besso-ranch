@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { EditableImage, EditableText } from "@/components/editing";
+import { useEditModeOptional } from "@/context/EditModeContext";
 
 interface AnimalSettings {
   [key: string]: string | undefined;
@@ -51,6 +52,9 @@ const defaultAnimals = [
 ];
 
 export default function MeetTheAnimals({ settings = {} }: MeetTheAnimalsProps) {
+  const editMode = useEditModeOptional();
+  const isEditing = editMode?.isEditMode && editMode?.isAdmin;
+
   // Merge default values with settings
   const animals = defaultAnimals.map((animal) => ({
     ...animal,
@@ -108,17 +112,13 @@ export default function MeetTheAnimals({ settings = {} }: MeetTheAnimalsProps) {
           {animals.map((animal, index) => (
             <motion.div
               key={animal.id}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={isEditing ? false : { opacity: 0, scale: 0.9 }}
+              whileInView={isEditing ? undefined : { opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
             >
               <div className="block group">
-                <motion.div
-                  className="relative aspect-square rounded-2xl overflow-hidden bg-warm-brown/10"
-                  whileHover={{ scale: 1.03 }}
-                  transition={{ duration: 0.3 }}
-                >
+                <div className="relative aspect-square rounded-2xl overflow-hidden bg-warm-brown/10">
                   {/* Editable Image */}
                   <EditableImage
                     src={animal.image}
@@ -130,14 +130,16 @@ export default function MeetTheAnimals({ settings = {} }: MeetTheAnimalsProps) {
                     containerClassName="absolute inset-0"
                   />
 
-                  {/* Overlay on hover - link to animal page */}
-                  <Link
-                    href={animal.href}
-                    className="absolute inset-0 bg-warm-brown/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10"
-                  >
-                    <span className="text-cream font-heading text-lg">Meet Them</span>
-                  </Link>
-                </motion.div>
+                  {/* Overlay on hover - link to animal page (hidden in edit mode) */}
+                  {!isEditing && (
+                    <Link
+                      href={animal.href}
+                      className="absolute inset-0 bg-warm-brown/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10"
+                    >
+                      <span className="text-cream font-heading text-lg">Meet Them</span>
+                    </Link>
+                  )}
+                </div>
 
                 <div className="mt-3 text-center">
                   <EditableText
