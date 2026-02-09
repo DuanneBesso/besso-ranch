@@ -8,7 +8,6 @@ async function getFeaturedProducts() {
   return prisma.product.findMany({
     where: {
       featured: true,
-      inStock: true,
     },
     orderBy: [{ displayOrder: 'asc' }, { name: 'asc' }],
     take: 4,
