@@ -33,7 +33,7 @@ export default function OurStoryClient({ settings }: OurStoryClientProps) {
   const familyTitle = settings.story_family_title || "Meet the Bessos";
   const familyText1 = settings.story_family_text1 || "We're a family passionate about sustainable living, animal welfare, and providing our community with the highest quality natural products.";
   const familyText2 = settings.story_family_text2 || "Every day on the ranch brings new adventures and learning opportunities. We're grateful to share this journey with you.";
-  const familyImage = settings.story_family_image || "/images/about/family.jpg";
+  const familyImage = settings.story_family_image || "/images/about/story.jpg";
 
   return (
     <>
