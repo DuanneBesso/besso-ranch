@@ -25,7 +25,7 @@ export default function ContactPageClient({ settings }: ContactPageClientProps) 
 
   // Contact info from settings
   const contactEmail = settings.contact_email || "hello@bessoranch.com";
-  const contactPhone = settings.contact_phone || "(760) 555-1234";
+  const contactPhone = settings.contact_phone || "(818) 732-1248";
   const contactLocation = settings.contact_location || "Yucca Valley, CA 92284";
   const contactHours = settings.contact_hours || "By appointment";
 
