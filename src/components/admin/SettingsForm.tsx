@@ -219,9 +219,28 @@ export default function SettingsForm({ settings }: { settings: Settings }) {
       <div className="bg-white rounded-lg shadow p-6">
         <div className="flex items-center gap-2 mb-6">
           <Bell className="h-5 w-5 text-forest-green" />
-          <h2 className="text-lg font-semibold text-gray-900">Quiet Hours</h2>
+          <h2 className="text-lg font-semibold text-gray-900">Notification Settings</h2>
         </div>
 
+        <div className="mb-6">
+          <label htmlFor="admin_notification_emails" className="block text-sm font-medium text-gray-700 mb-1">
+            Admin Notification Emails
+          </label>
+          <input
+            type="text"
+            id="admin_notification_emails"
+            name="admin_notification_emails"
+            value={String(formData.admin_notification_emails || '')}
+            onChange={handleChange}
+            placeholder="hello@bessoranch.com, admin@bessoranch.com"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-forest-green focus:border-transparent"
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Comma-separated emails for order alerts and stock warnings. Falls back to Contact Email if empty.
+          </p>
+        </div>
+
+        <h3 className="text-sm font-semibold text-gray-700 mb-2">Quiet Hours</h3>
         <p className="text-sm text-gray-500 mb-4">
           No notifications will be sent during quiet hours.
         </p>
