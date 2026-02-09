@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowLeft, MapPin, Phone } from "lucide-react";
+import { MapPin, Phone } from "lucide-react";
 
 interface Product {
   id: string;
@@ -28,11 +28,7 @@ export default function PoultryPageClient({ products }: PoultryPageClientProps) 
     <>
       {/* Hero Section */}
       <section className="relative py-16 bg-gradient-to-br from-forest-green to-forest-green-700">
-        <div className="container-custom">
-          <Link href="/products" className="inline-flex items-center text-white/80 hover:text-white mb-6 transition-colors">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to All Products
-          </Link>
+        <div className="container-custom text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -42,7 +38,7 @@ export default function PoultryPageClient({ products }: PoultryPageClientProps) 
             <h1 className="font-display text-4xl md:text-5xl text-white mb-4">
               Live Poultry
             </h1>
-            <p className="text-white/80 max-w-xl">
+            <p className="text-white/80 max-w-xl mx-auto">
               Start or expand your own flock with our healthy, well-socialized birds.
               All birds are raised humanely and ready for their new homes.
             </p>

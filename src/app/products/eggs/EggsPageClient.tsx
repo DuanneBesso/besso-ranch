@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
 import AddToCartButton from "@/components/cart/AddToCartButton";
 
 interface Product {
@@ -29,11 +28,7 @@ export default function EggsPageClient({ products }: EggsPageClientProps) {
     <>
       {/* Hero Section */}
       <section className="relative py-16 bg-gradient-to-br from-soft-gold to-barn-red">
-        <div className="container-custom">
-          <Link href="/products" className="inline-flex items-center text-white/80 hover:text-white mb-6 transition-colors">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to All Products
-          </Link>
+        <div className="container-custom text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -43,7 +38,7 @@ export default function EggsPageClient({ products }: EggsPageClientProps) {
             <h1 className="font-display text-4xl md:text-5xl text-white mb-4">
               Eggs
             </h1>
-            <p className="text-white/80 max-w-xl">
+            <p className="text-white/80 max-w-xl mx-auto">
               From our happy, free-range birds to your table. Experience the difference
               that sustainable farming and proper nutrition makes.
             </p>

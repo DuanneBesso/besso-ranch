@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowLeft, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import AddToCartButton from "@/components/cart/AddToCartButton";
 
 interface Product {
@@ -29,11 +29,7 @@ export default function GoatMilkPageClient({ products }: GoatMilkPageClientProps
     <>
       {/* Hero Section */}
       <section className="relative py-16 bg-gradient-to-br from-sage to-forest-green">
-        <div className="container-custom">
-          <Link href="/products" className="inline-flex items-center text-white/80 hover:text-white mb-6 transition-colors">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to All Products
-          </Link>
+        <div className="container-custom text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -43,7 +39,7 @@ export default function GoatMilkPageClient({ products }: GoatMilkPageClientProps
             <h1 className="font-display text-4xl md:text-5xl text-white mb-4">
               Goat Milk Products
             </h1>
-            <p className="text-white/80 max-w-xl">
+            <p className="text-white/80 max-w-xl mx-auto">
               Made from fresh milk from our Nigerian Dwarf goats. Each product is
               handcrafted in small batches using time-honored methods.
             </p>
