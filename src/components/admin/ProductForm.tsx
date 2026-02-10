@@ -26,12 +26,19 @@ interface Product {
 
 const categories = [
   { value: 'eggs', label: 'Eggs' },
+  { value: 'fertile-eggs', label: 'Fertile Eggs' },
   { value: 'poultry', label: 'Poultry' },
   { value: 'goat-milk', label: 'Goat Milk Products' },
 ];
 
 const subcategories: Record<string, { value: string; label: string }[]> = {
   eggs: [
+    { value: 'chicken', label: 'Chicken' },
+    { value: 'duck', label: 'Duck' },
+    { value: 'turkey', label: 'Turkey' },
+    { value: 'goose', label: 'Goose' },
+  ],
+  'fertile-eggs': [
     { value: 'chicken', label: 'Chicken' },
     { value: 'duck', label: 'Duck' },
     { value: 'turkey', label: 'Turkey' },
