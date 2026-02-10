@@ -12,6 +12,7 @@ export const dynamic = 'force-dynamic';
 
 async function getInstagramPosts() {
   return prisma.instagramPost.findMany({
+    where: { hidden: false },
     orderBy: { timestamp: 'desc' },
     take: 30,
   });

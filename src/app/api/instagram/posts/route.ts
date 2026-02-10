@@ -7,6 +7,7 @@ export async function GET(request: NextRequest) {
     const limit = limitParam ? parseInt(limitParam, 10) : 30;
 
     const posts = await prisma.instagramPost.findMany({
+      where: { hidden: false },
       orderBy: { timestamp: 'desc' },
       take: Math.min(limit, 100),
     });

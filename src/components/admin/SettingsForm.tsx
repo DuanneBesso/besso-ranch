@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Save, Store, Mail, Truck, Bell, Clock, ImageIcon, Instagram, RefreshCw } from 'lucide-react';
+import { Save, Store, Mail, Truck, Bell, Clock, ImageIcon, Instagram, RefreshCw, Eye, EyeOff, Grid3X3 } from 'lucide-react';
 import ImageUpload from './ImageUpload';
 
 interface Settings {
@@ -18,6 +18,56 @@ export default function SettingsForm({ settings }: { settings: Settings }) {
   const [syncing, setSyncing] = useState(false);
   const [refreshingToken, setRefreshingToken] = useState(false);
   const [instagramStatus, setInstagramStatus] = useState('');
+  const [galleryPosts, setGalleryPosts] = useState<Array<{
+    id: string;
+    mediaUrl: string;
+    thumbnailUrl: string | null;
+    mediaType: string;
+    caption: string | null;
+    hidden: boolean;
+    timestamp: string;
+  }>>([]);
+  const [loadingPosts, setLoadingPosts] = useState(false);
+  const [togglingPost, setTogglingPost] = useState<string | null>(null);
+
+  const fetchGalleryPosts = useCallback(async () => {
+    setLoadingPosts(true);
+    try {
+      const res = await fetch('/api/admin/instagram/posts');
+      if (res.ok) {
+        const data = await res.json();
+        setGalleryPosts(data.posts);
+      }
+    } catch {
+      // silently fail — posts section just won't load
+    } finally {
+      setLoadingPosts(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchGalleryPosts();
+  }, [fetchGalleryPosts]);
+
+  const togglePostVisibility = async (postId: string, currentHidden: boolean) => {
+    setTogglingPost(postId);
+    try {
+      const res = await fetch('/api/admin/instagram/posts', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: postId, hidden: !currentHidden }),
+      });
+      if (res.ok) {
+        setGalleryPosts(prev =>
+          prev.map(p => p.id === postId ? { ...p, hidden: !currentHidden } : p)
+        );
+      }
+    } catch {
+      // silently fail
+    } finally {
+      setTogglingPost(null);
+    }
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -445,6 +495,72 @@ export default function SettingsForm({ settings }: { settings: Settings }) {
           </div>
         </div>
       </div>
+
+      {/* Manage Gallery Posts */}
+      {galleryPosts.length > 0 && (
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="flex items-center gap-2 mb-2">
+            <Grid3X3 className="h-5 w-5 text-forest-green" />
+            <h2 className="text-lg font-semibold text-gray-900">Manage Gallery Posts</h2>
+          </div>
+
+          <p className="text-sm text-gray-500 mb-4">
+            Click a photo to hide or show it on the gallery page. Hidden posts are dimmed with an eye-slash icon.
+          </p>
+
+          <div className="flex gap-3 text-xs text-gray-500 mb-4">
+            <span>{galleryPosts.filter(p => !p.hidden).length} visible</span>
+            <span>&middot;</span>
+            <span>{galleryPosts.filter(p => p.hidden).length} hidden</span>
+          </div>
+
+          {loadingPosts ? (
+            <div className="flex items-center justify-center py-12">
+              <RefreshCw className="h-6 w-6 animate-spin text-gray-400" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2">
+              {galleryPosts.map(post => (
+                <button
+                  key={post.id}
+                  type="button"
+                  disabled={togglingPost === post.id}
+                  onClick={() => togglePostVisibility(post.id, post.hidden)}
+                  className={`relative aspect-square rounded-lg overflow-hidden group border-2 transition-all ${
+                    post.hidden
+                      ? 'opacity-40 border-red-300 hover:opacity-60'
+                      : 'opacity-100 border-transparent hover:border-forest-green'
+                  } ${togglingPost === post.id ? 'animate-pulse' : ''}`}
+                  title={post.hidden ? 'Click to show on gallery' : 'Click to hide from gallery'}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={post.mediaType === 'VIDEO' ? (post.thumbnailUrl || post.mediaUrl) : post.mediaUrl}
+                    alt={post.caption?.slice(0, 50) || 'Instagram post'}
+                    className="w-full h-full object-cover"
+                  />
+
+                  {/* Hidden overlay icon */}
+                  {post.hidden && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                      <EyeOff className="h-6 w-6 text-white drop-shadow-lg" />
+                    </div>
+                  )}
+
+                  {/* Hover overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/30">
+                    {post.hidden ? (
+                      <Eye className="h-6 w-6 text-white drop-shadow-lg" />
+                    ) : (
+                      <EyeOff className="h-6 w-6 text-white drop-shadow-lg" />
+                    )}
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Save Button */}
       <div className="flex justify-end">
