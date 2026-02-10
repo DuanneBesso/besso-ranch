@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Save, Store, Mail, Truck, Bell, Clock, ImageIcon } from 'lucide-react';
+import { Save, Store, Mail, Truck, Bell, Clock, ImageIcon, Instagram, RefreshCw } from 'lucide-react';
 import ImageUpload from './ImageUpload';
 
 interface Settings {
@@ -15,6 +15,9 @@ export default function SettingsForm({ settings }: { settings: Settings }) {
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
+  const [syncing, setSyncing] = useState(false);
+  const [refreshingToken, setRefreshingToken] = useState(false);
+  const [instagramStatus, setInstagramStatus] = useState('');
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -292,6 +295,153 @@ export default function SettingsForm({ settings }: { settings: Settings }) {
                 ? `${Number(formData.quiet_hours_end || 7) - 12}:00 PM`
                 : `${formData.quiet_hours_end || 7}:00 AM`}
             </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Instagram Integration */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <div className="flex items-center gap-2 mb-6">
+          <Instagram className="h-5 w-5 text-forest-green" />
+          <h2 className="text-lg font-semibold text-gray-900">Instagram Integration</h2>
+        </div>
+
+        <p className="text-sm text-gray-500 mb-4">
+          Connect your Instagram Business account to display a photo gallery on the site. Posts are cached in the database for fast loading.
+        </p>
+
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="instagram_user_id" className="block text-sm font-medium text-gray-700 mb-1">
+                Instagram User ID
+              </label>
+              <input
+                type="text"
+                id="instagram_user_id"
+                name="instagram_user_id"
+                value={String(formData.instagram_user_id || '')}
+                onChange={handleChange}
+                placeholder="e.g. 17841400000000000"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-forest-green focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="instagram_profile_url" className="block text-sm font-medium text-gray-700 mb-1">
+                Instagram Profile URL
+              </label>
+              <input
+                type="url"
+                id="instagram_profile_url"
+                name="instagram_profile_url"
+                value={String(formData.instagram_profile_url || '')}
+                onChange={handleChange}
+                placeholder="https://instagram.com/bessoranch"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-forest-green focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="instagram_access_token" className="block text-sm font-medium text-gray-700 mb-1">
+              Access Token
+            </label>
+            <input
+              type="password"
+              id="instagram_access_token"
+              name="instagram_access_token"
+              value={String(formData.instagram_access_token || '')}
+              onChange={handleChange}
+              placeholder="Long-lived access token"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-forest-green focus:border-transparent"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Paste a long-lived token from the Facebook Developer portal. It auto-refreshes via Vercel Cron.
+            </p>
+          </div>
+
+          <div>
+            <label htmlFor="gallery_posts_limit" className="block text-sm font-medium text-gray-700 mb-1">
+              Posts Limit
+            </label>
+            <input
+              type="number"
+              id="gallery_posts_limit"
+              name="gallery_posts_limit"
+              value={Number(formData.gallery_posts_limit || 30)}
+              onChange={handleChange}
+              min="1"
+              max="100"
+              className="w-32 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-forest-green focus:border-transparent"
+            />
+          </div>
+
+          {formData.instagram_last_sync && (
+            <p className="text-sm text-gray-500">
+              Last synced: {new Date(String(formData.instagram_last_sync)).toLocaleString()}
+            </p>
+          )}
+
+          {instagramStatus && (
+            <div className={`text-sm px-3 py-2 rounded-md ${instagramStatus.startsWith('Error') ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
+              {instagramStatus}
+            </div>
+          )}
+
+          <div className="flex gap-3">
+            <button
+              type="button"
+              disabled={syncing}
+              onClick={async () => {
+                setSyncing(true);
+                setInstagramStatus('');
+                try {
+                  const res = await fetch('/api/admin/instagram/sync', { method: 'POST' });
+                  const data = await res.json();
+                  if (res.ok) {
+                    setInstagramStatus(`Synced ${data.synced} posts successfully!`);
+                    setFormData(prev => ({ ...prev, instagram_last_sync: new Date().toISOString() }));
+                  } else {
+                    setInstagramStatus(`Error: ${data.error}`);
+                  }
+                } catch {
+                  setInstagramStatus('Error: Failed to connect');
+                } finally {
+                  setSyncing(false);
+                }
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-forest-green text-white rounded-md hover:bg-forest-green-600 transition-colors disabled:opacity-50 text-sm"
+            >
+              <RefreshCw className={`h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />
+              {syncing ? 'Syncing...' : 'Sync Now'}
+            </button>
+
+            <button
+              type="button"
+              disabled={refreshingToken}
+              onClick={async () => {
+                setRefreshingToken(true);
+                setInstagramStatus('');
+                try {
+                  const res = await fetch('/api/admin/instagram/refresh-token', { method: 'POST' });
+                  const data = await res.json();
+                  if (res.ok) {
+                    setInstagramStatus(`Token refreshed! Expires: ${new Date(data.expiresAt).toLocaleDateString()}`);
+                  } else {
+                    setInstagramStatus(`Error: ${data.error}`);
+                  }
+                } catch {
+                  setInstagramStatus('Error: Failed to refresh token');
+                } finally {
+                  setRefreshingToken(false);
+                }
+              }}
+              className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50 text-sm"
+            >
+              <RefreshCw className={`h-4 w-4 ${refreshingToken ? 'animate-spin' : ''}`} />
+              {refreshingToken ? 'Refreshing...' : 'Refresh Token'}
+            </button>
           </div>
         </div>
       </div>

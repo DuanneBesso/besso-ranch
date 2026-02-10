@@ -1,4 +1,14 @@
 {
   "framework": "nextjs",
-  "regions": ["sfo1"]
+  "regions": ["sfo1"],
+  "crons": [
+    {
+      "path": "/api/admin/instagram/sync?secret=CRON_SECRET_VALUE",
+      "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/admin/instagram/refresh-token?secret=CRON_SECRET_VALUE",
+      "schedule": "0 0 1,15 * *"
+    }
+  ]
 }

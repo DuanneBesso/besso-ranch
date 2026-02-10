@@ -30,6 +30,7 @@ const navigation = [
     ],
   },
   { name: "Farm Journal", href: "/blog" },
+  { name: "Gallery", href: "/gallery" },
   { name: "Contact", href: "/contact" },
 ];
 

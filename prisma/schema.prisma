@@ -259,6 +259,28 @@ model InventoryLog {
 // NOTIFICATION LOG
 // ============================================
 
+// ============================================
+// INSTAGRAM FEED
+// ============================================
+
+model InstagramPost {
+  id            String   @id          // Instagram media ID
+  caption       String?
+  mediaType     String               // "IMAGE", "VIDEO", "CAROUSEL_ALBUM"
+  mediaUrl      String
+  thumbnailUrl  String?              // For VIDEO type
+  permalink     String               // Link to original post
+  timestamp     DateTime             // When posted on Instagram
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([timestamp])
+}
+
+// ============================================
+// NOTIFICATION LOG
+// ============================================
+
 model NotificationLog {
   id          String   @id @default(cuid())
 
