@@ -35,11 +35,11 @@ export async function POST(request: NextRequest) {
     }
     case 'payment_intent.payment_failed': {
       const paymentIntent = event.data.object as Stripe.PaymentIntent;
-      console.log('Payment failed:', paymentIntent.id);
+      console.error('Payment failed:', paymentIntent.id);
       break;
     }
     default:
-      console.log(`Unhandled event type: ${event.type}`);
+      break;
   }
 
   return NextResponse.json({ received: true });
@@ -178,7 +178,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
       })),
     }).catch((err) => console.error('[Notifications] New order notification failed:', err));
 
-    console.log(`Order ${order.orderNumber} marked as paid`);
+    // Order successfully marked as paid
   } catch (error) {
     console.error('Error handling checkout complete:', error);
   }
@@ -196,7 +196,7 @@ async function handleCheckoutExpired(session: Stripe.Checkout.Session) {
       data: { status: 'cancelled' },
     });
 
-    console.log(`Order ${orderId} cancelled due to expired checkout`);
+    // Order cancelled due to expired checkout
   } catch (error) {
     console.error('Error handling checkout expired:', error);
   }

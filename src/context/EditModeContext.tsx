@@ -67,17 +67,13 @@ export function EditModeProvider({ children }: EditModeProviderProps) {
   useEffect(() => {
     async function checkAdmin() {
       try {
-        console.log("[EditMode] Checking admin status...");
         const res = await fetch("/api/admin/auth/me", {
           credentials: "include",
         });
-        console.log("[EditMode] Auth response status:", res.status);
         if (res.ok) {
           const data = await res.json();
-          console.log("[EditMode] Auth data:", data);
           setIsAdmin(!!data.admin);
         } else {
-          console.log("[EditMode] Auth failed, not admin");
           setIsAdmin(false);
         }
       } catch (err) {

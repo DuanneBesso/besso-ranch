@@ -12,7 +12,6 @@ export default function EditModeToolbar() {
   // Track if component mounted (client-side only)
   useEffect(() => {
     setMounted(true);
-    console.log("[EditModeToolbar] Mounted, isAdmin:", editMode?.isAdmin);
   }, [editMode?.isAdmin]);
 
   // Keyboard shortcut for save (Ctrl+S)
