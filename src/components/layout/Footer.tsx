@@ -29,6 +29,9 @@ export default function Footer() {
   const [logoUrl, setLogoUrl] = useState("/images/logo.png");
   const [instagramUrl, setInstagramUrl] = useState("https://www.instagram.com/bessoranch/");
   const [facebookUrl, setFacebookUrl] = useState("https://www.facebook.com/BessoRanch/");
+  const [contactEmail, setContactEmail] = useState("hello@bessoranch.com");
+  const [contactPhone, setContactPhone] = useState("(818) 732-1248");
+  const [contactLocation, setContactLocation] = useState("Yucca Valley, CA 92284");
 
   useEffect(() => {
     fetch("/api/settings/public")
@@ -37,6 +40,9 @@ export default function Footer() {
         if (data.site_logo) setLogoUrl(data.site_logo);
         if (data.instagram_profile_url) setInstagramUrl(data.instagram_profile_url);
         if (data.facebook_profile_url) setFacebookUrl(data.facebook_profile_url);
+        if (data.contact_email) setContactEmail(data.contact_email);
+        if (data.contact_phone) setContactPhone(data.contact_phone);
+        if (data.contact_location) setContactLocation(data.contact_location);
       })
       .catch(() => {});
   }, []);
@@ -125,26 +131,26 @@ export default function Footer() {
             <ul className="space-y-3">
               <li>
                 <a
-                  href="mailto:hello@bessoranch.com"
+                  href={`mailto:${contactEmail}`}
                   className="flex items-center space-x-3 text-cream/70 hover:text-soft-gold transition-colors text-sm"
                 >
                   <Mail className="w-4 h-4" />
-                  <span>hello@bessoranch.com</span>
+                  <span>{contactEmail}</span>
                 </a>
               </li>
               <li>
                 <a
-                  href="tel:+18187321248"
+                  href={`tel:${contactPhone.replace(/[^0-9+]/g, '')}`}
                   className="flex items-center space-x-3 text-cream/70 hover:text-soft-gold transition-colors text-sm"
                 >
                   <Phone className="w-4 h-4" />
-                  <span>(818) 732-1248</span>
+                  <span>{contactPhone}</span>
                 </a>
               </li>
               <li>
                 <div className="flex items-start space-x-3 text-cream/70 text-sm">
                   <MapPin className="w-4 h-4 mt-0.5" />
-                  <span>Yucca Valley, CA 92284</span>
+                  <span>{contactLocation}</span>
                 </div>
               </li>
             </ul>

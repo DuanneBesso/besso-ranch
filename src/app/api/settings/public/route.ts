@@ -10,6 +10,9 @@ const PUBLIC_SETTING_KEYS = [
   'tour_scheduling_url',
   'instagram_profile_url',
   'facebook_profile_url',
+  'contact_email',
+  'contact_phone',
+  'contact_location',
 ];
 
 export async function GET() {
