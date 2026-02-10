@@ -52,6 +52,9 @@ export async function POST(request: NextRequest) {
         inStock: body.inStock ?? true,
         featured: body.featured ?? false,
         displayOrder: body.displayOrder || 0,
+        preorderEnabled: body.preorderEnabled ?? false,
+        preorderLimit: body.preorderLimit || 0,
+        preorderCount: 0,
       },
     });
 

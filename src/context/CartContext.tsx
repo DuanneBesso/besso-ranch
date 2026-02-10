@@ -10,6 +10,7 @@ export interface CartItem {
   quantity: number;
   image?: string;
   maxQuantity: number;
+  isPreorder?: boolean;
 }
 
 interface CartState {

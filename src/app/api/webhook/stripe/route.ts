@@ -75,49 +75,81 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
       },
     });
 
-    // Deduct stock for each item
+    // Deduct stock or increment preorder count for each item
     for (const item of order.items) {
-      await prisma.product.update({
-        where: { id: item.productId },
-        data: {
-          stockQuantity: {
-            decrement: item.quantity,
-          },
-        },
-      });
+      if (item.isPreorder) {
+        // Pre-order: increment preorderCount, don't touch stock
+        const product = await prisma.product.findUnique({
+          where: { id: item.productId },
+        });
 
-      // Check if stock is now low or out
-      const product = await prisma.product.findUnique({
-        where: { id: item.productId },
-      });
-
-      if (product) {
-        // Update inStock status if out of stock
-        if (product.stockQuantity <= 0) {
+        if (product) {
           await prisma.product.update({
             where: { id: item.productId },
-            data: { inStock: false },
+            data: {
+              preorderCount: {
+                increment: item.quantity,
+              },
+            },
+          });
+
+          // Log pre-order
+          await prisma.inventoryLog.create({
+            data: {
+              productId: item.productId,
+              changeType: 'preorder',
+              quantity: item.quantity,
+              previousQty: product.preorderCount,
+              newQty: product.preorderCount + item.quantity,
+              source: 'order',
+              notes: `Pre-order from ${order.orderNumber}`,
+            },
           });
         }
-
-        // Log inventory change
-        await prisma.inventoryLog.create({
+      } else {
+        // Normal order: deduct stock
+        await prisma.product.update({
+          where: { id: item.productId },
           data: {
-            productId: item.productId,
-            changeType: 'order_deduct',
-            quantity: -item.quantity,
-            previousQty: product.stockQuantity + item.quantity,
-            newQty: product.stockQuantity,
-            source: 'order',
-            notes: `Order ${order.orderNumber}`,
+            stockQuantity: {
+              decrement: item.quantity,
+            },
           },
         });
 
-        // Notify admin if stock is low or out
-        if (product.stockQuantity <= 0 || product.stockQuantity <= product.lowStockThreshold) {
-          notifyLowStock(product).catch((err) =>
-            console.error('[Notifications] Low stock notification failed:', err)
-          );
+        // Check if stock is now low or out
+        const product = await prisma.product.findUnique({
+          where: { id: item.productId },
+        });
+
+        if (product) {
+          // Update inStock status if out of stock
+          if (product.stockQuantity <= 0) {
+            await prisma.product.update({
+              where: { id: item.productId },
+              data: { inStock: false },
+            });
+          }
+
+          // Log inventory change
+          await prisma.inventoryLog.create({
+            data: {
+              productId: item.productId,
+              changeType: 'order_deduct',
+              quantity: -item.quantity,
+              previousQty: product.stockQuantity + item.quantity,
+              newQty: product.stockQuantity,
+              source: 'order',
+              notes: `Order ${order.orderNumber}`,
+            },
+          });
+
+          // Notify admin if stock is low or out
+          if (product.stockQuantity <= 0 || product.stockQuantity <= product.lowStockThreshold) {
+            notifyLowStock(product).catch((err) =>
+              console.error('[Notifications] Low stock notification failed:', err)
+            );
+          }
         }
       }
     }

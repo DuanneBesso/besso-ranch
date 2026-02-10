@@ -23,6 +23,9 @@ export async function GET(
       featured: true,
       images: true,
       specifications: true,
+      preorderEnabled: true,
+      preorderLimit: true,
+      preorderCount: true,
     },
   });
 

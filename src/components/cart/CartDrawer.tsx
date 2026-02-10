@@ -89,7 +89,12 @@ export default function CartDrawer() {
 
                   {/* Product Details */}
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-warm-brown truncate">{item.name}</h3>
+                    <h3 className="font-medium text-warm-brown truncate">
+                      {item.name}
+                      {item.isPreorder && (
+                        <span className="text-xs text-amber-600 font-medium ml-1">(Pre-Order)</span>
+                      )}
+                    </h3>
                     <p className="text-sm text-gray-500">{item.unit}</p>
                     <p className="text-forest-green font-semibold">${item.price.toFixed(2)}</p>
 

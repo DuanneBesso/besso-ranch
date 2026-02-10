@@ -19,6 +19,9 @@ interface Product {
   featured: boolean;
   displayOrder: number;
   images: string;
+  preorderEnabled: boolean;
+  preorderLimit: number;
+  preorderCount: number;
 }
 
 const categories = [
@@ -61,6 +64,9 @@ const defaultProduct: Product = {
   featured: false,
   displayOrder: 0,
   images: '',
+  preorderEnabled: false,
+  preorderLimit: 0,
+  preorderCount: 0,
 };
 
 export default function ProductForm({ product }: { product?: Product }) {
@@ -364,6 +370,56 @@ export default function ProductForm({ product }: { product?: Product }) {
           />
           <p className="text-xs text-gray-500 mt-1">Lower numbers appear first</p>
         </div>
+      </div>
+
+      <div className="bg-white rounded-lg shadow p-6 space-y-6">
+        <h2 className="text-lg font-semibold text-gray-900">Pre-Order Settings</h2>
+
+        <label className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            name="preorderEnabled"
+            checked={formData.preorderEnabled}
+            onChange={handleChange}
+            className="w-4 h-4 text-forest-green border-gray-300 rounded focus:ring-forest-green"
+          />
+          <span className="text-sm text-gray-700">Accept pre-orders when out of stock</span>
+        </label>
+
+        {formData.preorderEnabled && (
+          <>
+            <div>
+              <label htmlFor="preorderLimit" className="block text-sm font-medium text-gray-700 mb-1">
+                Pre-Order Limit
+              </label>
+              <input
+                type="number"
+                id="preorderLimit"
+                name="preorderLimit"
+                value={formData.preorderLimit}
+                onChange={handleChange}
+                min="1"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-forest-green focus:border-transparent"
+              />
+              <p className="text-xs text-gray-500 mt-1">Maximum number of units that can be pre-ordered</p>
+            </div>
+
+            {isEditing && formData.preorderCount > 0 && (
+              <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-md px-4 py-3">
+                <span className="text-sm text-amber-800">
+                  Pre-Orders Received: <strong>{formData.preorderCount}</strong> / {formData.preorderLimit}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, preorderCount: 0 }))}
+                  className="text-sm text-amber-700 hover:text-amber-900 font-medium underline"
+                >
+                  Reset Count
+                </button>
+              </div>
+            )}
+          </>
+        )}
       </div>
 
       <div className="flex gap-4">

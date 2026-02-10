@@ -5,6 +5,7 @@ import prisma from '@/lib/db';
 interface CartItem {
   productId: string;
   quantity: number;
+  isPreorder?: boolean;
 }
 
 interface CheckoutRequest {
@@ -50,6 +51,7 @@ export async function POST(request: NextRequest) {
     }[] = [];
 
     let subtotal = 0;
+    const preorderItemIds = new Set<string>();
 
     for (const item of body.items) {
       const product = productMap.get(item.productId);
@@ -60,7 +62,20 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      if (!product.inStock || product.stockQuantity < item.quantity) {
+      // Check if this is a pre-order item
+      const isPreorder = item.isPreorder || (!product.inStock && product.preorderEnabled);
+
+      if (isPreorder) {
+        // Validate against pre-order limit
+        const preorderRemaining = product.preorderLimit - product.preorderCount;
+        if (preorderRemaining < item.quantity) {
+          return NextResponse.json(
+            { error: `Pre-order limit reached for ${product.name}` },
+            { status: 400 }
+          );
+        }
+        preorderItemIds.add(product.id);
+      } else if (!product.inStock || product.stockQuantity < item.quantity) {
         return NextResponse.json(
           { error: `${product.name} is out of stock or has insufficient quantity` },
           { status: 400 }
@@ -70,11 +85,13 @@ export async function POST(request: NextRequest) {
       const itemTotal = product.price * item.quantity;
       subtotal += itemTotal;
 
+      const productName = isPreorder ? `${product.name} (Pre-Order)` : product.name;
+
       lineItems.push({
         price_data: {
           currency: 'usd',
           product_data: {
-            name: product.name,
+            name: productName,
             description: `${product.unit}${product.description ? ' - ' + product.description.substring(0, 100) : ''}`,
           },
           unit_amount: Math.round(product.price * 100), // Stripe uses cents
@@ -136,6 +153,7 @@ export async function POST(request: NextRequest) {
               productPrice: product.price,
               quantity: item.quantity,
               total: product.price * item.quantity,
+              isPreorder: preorderItemIds.has(product.id),
             };
           }),
         },

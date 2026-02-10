@@ -55,6 +55,9 @@ export default async function EditProductPage({
           featured: product.featured,
           displayOrder: product.displayOrder,
           images: product.images || '',
+          preorderEnabled: product.preorderEnabled,
+          preorderLimit: product.preorderLimit,
+          preorderCount: product.preorderCount,
         }}
       />
     </div>

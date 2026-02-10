@@ -44,6 +44,11 @@ model Product {
   lowStockThreshold Int     @default(5)
   inStock       Boolean     @default(true)
 
+  // Pre-Order
+  preorderEnabled   Boolean  @default(false)
+  preorderLimit     Int      @default(0)
+  preorderCount     Int      @default(0)
+
   // Display
   featured      Boolean     @default(false)
   displayOrder  Int         @default(0)
@@ -143,6 +148,7 @@ model OrderItem {
   productPrice Float
   quantity    Int
   total       Float
+  isPreorder  Boolean  @default(false)
 
   createdAt   DateTime @default(now())
 }

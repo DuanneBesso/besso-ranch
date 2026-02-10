@@ -19,6 +19,9 @@ interface Product {
   featured: boolean;
   images: string | null;
   specifications: string | null;
+  preorderEnabled?: boolean;
+  preorderLimit?: number;
+  preorderCount?: number;
 }
 
 interface ProductDetailProps {
@@ -83,9 +86,11 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                     <span className="text-warm-brown/40 font-heading text-xl">Photo Coming Soon</span>
                   </div>
                 )}
-                {!product.inStock && (
+                {!product.inStock && product.preorderEnabled && (product.preorderLimit || 0) - (product.preorderCount || 0) > 0 ? (
+                  <div className="absolute top-4 left-4 bg-amber-500 text-white text-base px-4 py-2 rounded-full font-medium">Available for Pre-Order</div>
+                ) : !product.inStock ? (
                   <div className="absolute top-4 left-4 badge-red text-base px-4 py-2">Out of Stock</div>
-                )}
+                ) : null}
               </div>
 
               {/* Additional images */}
@@ -185,6 +190,12 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                       ? `Only ${product.stockQuantity} left in stock`
                       : "In Stock"}
                   </span>
+                ) : product.preorderEnabled && (product.preorderLimit || 0) - (product.preorderCount || 0) > 0 ? (
+                  <span className="text-sm text-amber-600 font-medium">
+                    Available for Pre-Order &mdash; {(product.preorderLimit || 0) - (product.preorderCount || 0)} units available
+                  </span>
+                ) : product.preorderEnabled && (product.preorderLimit || 0) - (product.preorderCount || 0) <= 0 ? (
+                  <span className="text-sm text-barn-red font-medium">Pre-Order Limit Reached</span>
                 ) : (
                   <span className="text-sm text-barn-red font-medium">Currently out of stock</span>
                 )}

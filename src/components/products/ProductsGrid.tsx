@@ -18,6 +18,9 @@ interface Product {
   stockQuantity: number;
   inStock: boolean;
   images?: string | null;
+  preorderEnabled?: boolean;
+  preorderLimit?: number;
+  preorderCount?: number;
 }
 
 const categories = [
@@ -108,11 +111,15 @@ export default function ProductsGrid({ products }: { products: Product[] }) {
               )}
 
               {/* Stock Badge */}
-              {!product.inStock && (
+              {!product.inStock && product.preorderEnabled && ((product.preorderLimit || 0) - (product.preorderCount || 0)) > 0 ? (
+                <div className="absolute top-3 left-3 bg-amber-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+                  Pre-Order
+                </div>
+              ) : !product.inStock ? (
                 <div className="absolute top-3 left-3 badge-red">
                   Out of Stock
                 </div>
-              )}
+              ) : null}
               {product.inStock && product.stockQuantity <= 5 && product.stockQuantity > 0 && (
                 <div className="absolute top-3 left-3 badge-gold">
                   Only {product.stockQuantity} left

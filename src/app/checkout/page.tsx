@@ -46,6 +46,7 @@ export default function CheckoutPage() {
           items: items.map((item) => ({
             productId: item.id,
             quantity: item.quantity,
+            isPreorder: item.isPreorder || false,
           })),
           ...formData,
         }),
@@ -339,7 +340,12 @@ export default function CheckoutPage() {
                       )}
                     </div>
                     <div className="flex-1">
-                      <p className="font-medium text-warm-brown">{item.name}</p>
+                      <p className="font-medium text-warm-brown">
+                        {item.name}
+                        {item.isPreorder && (
+                          <span className="text-xs text-amber-600 font-medium ml-1">(Pre-Order)</span>
+                        )}
+                      </p>
                       <p className="text-sm text-gray-500">
                         {item.unit} x {item.quantity}
                       </p>

@@ -6,8 +6,13 @@ export async function GET(request: NextRequest) {
   const category = searchParams.get('category');
   const featured = searchParams.get('featured');
 
-  const where: Record<string, unknown> = {
-    inStock: true,
+  // Show products that are in stock OR have pre-orders enabled
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const filters: any[] = [{ inStock: true }, { preorderEnabled: true }];
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const where: any = {
+    OR: filters,
   };
 
   if (category) {
@@ -34,6 +39,9 @@ export async function GET(request: NextRequest) {
       inStock: true,
       featured: true,
       images: true,
+      preorderEnabled: true,
+      preorderLimit: true,
+      preorderCount: true,
     },
   });
 
