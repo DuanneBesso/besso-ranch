@@ -3,11 +3,11 @@
   "regions": ["sfo1"],
   "crons": [
     {
-      "path": "/api/admin/instagram/sync?secret=CRON_SECRET_VALUE",
+      "path": "/api/admin/instagram/sync?secret=944244375b6e72f7cbd06241567f6c1ab325e43e1872cc9b5b763ef52832c20c",
       "schedule": "0 */6 * * *"
     },
     {
-      "path": "/api/admin/instagram/refresh-token?secret=CRON_SECRET_VALUE",
+      "path": "/api/admin/instagram/refresh-token?secret=944244375b6e72f7cbd06241567f6c1ab325e43e1872cc9b5b763ef52832c20c",
       "schedule": "0 0 1,15 * *"
     }
   ]
