@@ -199,6 +199,15 @@ A unique feature allowing the ranch owner to edit website text directly from the
   - Products (chicken-eggs, soap-lavender)
   - Hero placeholder, OG image
 
+### 27. Fix Cart Page — Use Real CartContext (Feb 10, 2026 — Session 5)
+
+- **Critical bug fixed:** The `/cart` page had hardcoded mock products (Farm Fresh Chicken Eggs, Goat Milk Soap - Lavender) via local `useState` instead of using the CartContext. Customers would see fake items instead of what they actually added.
+- Rewrote the page to use `useCart()` hook — now displays real cart items with images, pre-order badges, maxQuantity limits, and proper item count
+- Removed the delivery method picker (pickup vs delivery) from the cart page since that's handled at checkout
+- Added `aria-label` attributes to all icon-only buttons (quantity +/-, remove) for screen reader accessibility
+- **Files modified:** 1 (`src/app/cart/page.tsx` — 48 insertions, 98 deletions)
+- Build passes, committed and pushed to main for auto-deploy
+
 ### 26. SEO Metadata & Legal Cross-Links (Feb 10, 2026 — Session 5)
 
 - **Home page metadata:** Added `export const metadata` with full title ("Besso Ranch | Farm Fresh Eggs, Live Poultry & Goat Milk Products — Yucca Valley, CA") and description for search engines. Previously relied only on root layout base metadata.
