@@ -25,9 +25,11 @@ async function getGallerySettings() {
     },
   });
 
-  // Also fetch the Instagram profile URL for the CTA
-  const profileUrl = await prisma.setting.findUnique({
-    where: { key: 'instagram_profile_url' },
+  // Also fetch social profile URLs for the CTA
+  const socialSettings = await prisma.setting.findMany({
+    where: {
+      key: { in: ['instagram_profile_url', 'facebook_profile_url'] },
+    },
   });
 
   const settingsMap = settings.reduce((acc, s) => {
@@ -35,8 +37,8 @@ async function getGallerySettings() {
     return acc;
   }, {} as Record<string, string>);
 
-  if (profileUrl) {
-    settingsMap.instagram_profile_url = profileUrl.value;
+  for (const s of socialSettings) {
+    settingsMap[s.key] = s.value;
   }
 
   return settingsMap;

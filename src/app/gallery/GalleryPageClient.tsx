@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Instagram } from "lucide-react";
+import { Instagram, Facebook } from "lucide-react";
 import { EditableText } from "@/components/editing";
 import InstagramGrid from "@/components/gallery/InstagramGrid";
 import InstagramLightbox from "@/components/gallery/InstagramLightbox";
@@ -29,6 +29,7 @@ export default function GalleryPageClient({ posts, settings }: GalleryPageClient
   const heroTitle = settings.gallery_hero_title || "Gallery";
   const heroSubtitle = settings.gallery_hero_subtitle || "Life on the ranch through our lens — the animals, the land, and the beauty of the California High Desert.";
   const profileUrl = settings.instagram_profile_url || "";
+  const facebookUrl = settings.facebook_profile_url || "";
 
   return (
     <>
@@ -75,8 +76,41 @@ export default function GalleryPageClient({ posts, settings }: GalleryPageClient
         </div>
       </section>
 
+      {/* Social Follow Strip */}
+      <section className="bg-cream pt-10 pb-2">
+        <div className="container-custom text-center">
+          <p className="text-charcoal-400 text-sm md:text-base mb-4 max-w-lg mx-auto">
+            Fresh from the coop, the pasture, and the desert sky. Follow along for daily ranch life, new arrivals, and behind-the-scenes moments.
+          </p>
+          <div className="flex items-center justify-center gap-4">
+            {profileUrl && (
+              <a
+                href={profileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-warm-brown text-cream font-medium rounded-full hover:bg-warm-brown/90 transition-colors text-sm"
+              >
+                <Instagram className="w-4 h-4" />
+                Instagram
+              </a>
+            )}
+            {facebookUrl && (
+              <a
+                href={facebookUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-forest-green text-cream font-medium rounded-full hover:bg-forest-green/90 transition-colors text-sm"
+              >
+                <Facebook className="w-4 h-4" />
+                Facebook
+              </a>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* Gallery Grid */}
-      <section className="section bg-cream">
+      <section className="py-6 md:py-8 bg-cream">
         <div className="container-custom">
           {posts.length > 0 ? (
             <InstagramGrid

@@ -394,6 +394,21 @@ export default function SettingsForm({ settings }: { settings: Settings }) {
           </div>
 
           <div>
+            <label htmlFor="facebook_profile_url" className="block text-sm font-medium text-gray-700 mb-1">
+              Facebook Page URL
+            </label>
+            <input
+              type="url"
+              id="facebook_profile_url"
+              name="facebook_profile_url"
+              value={String(formData.facebook_profile_url || '')}
+              onChange={handleChange}
+              placeholder="https://facebook.com/bessoranch"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-forest-green focus:border-transparent"
+            />
+          </div>
+
+          <div>
             <label htmlFor="instagram_access_token" className="block text-sm font-medium text-gray-700 mb-1">
               Access Token
             </label>
