@@ -56,11 +56,13 @@ async function sendEmail({
   subject,
   html,
   type,
+  replyTo,
 }: {
   to: string;
   subject: string;
   html: string;
   type: string;
+  replyTo?: string;
 }) {
   const transporter = createTransporter();
 
@@ -86,6 +88,7 @@ async function sendEmail({
       to,
       subject,
       html,
+      ...(replyTo && { replyTo }),
     });
 
     await prisma.notificationLog.create({
@@ -428,5 +431,87 @@ export async function notifyLowStock(product: ProductForNotification): Promise<v
 
   for (const email of adminEmails) {
     await sendEmail({ to: email, subject, html, type });
+  }
+}
+
+// ============================================
+// CONTACT FORM NOTIFICATION
+// ============================================
+
+const SUBJECT_LABELS: Record<string, string> = {
+  order: 'Order Inquiry',
+  products: 'Product Question',
+  wholesale: 'Wholesale Inquiry',
+  visit: 'Farm Visit / Tour',
+  other: 'Other',
+};
+
+function buildContactFormTemplate(data: {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}): string {
+  const subjectLabel = SUBJECT_LABELS[data.subject] || 'General';
+
+  const content = `
+    <!-- Banner -->
+    <div style="background-color:#2D5016;border-radius:6px;padding:16px 20px;margin-bottom:24px;text-align:center;">
+      <h2 style="margin:0;color:#ffffff;font-size:20px;">New Contact Form Message</h2>
+    </div>
+
+    <!-- Customer Info -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
+      <tr>
+        <td style="padding:6px 0;font-size:14px;color:#666;">Name</td>
+        <td style="padding:6px 0;font-size:14px;color:#333;font-weight:bold;text-align:right;">${data.name}</td>
+      </tr>
+      <tr>
+        <td style="padding:6px 0;font-size:14px;color:#666;">Email</td>
+        <td style="padding:6px 0;font-size:14px;color:#333;text-align:right;">
+          <a href="mailto:${data.email}" style="color:#2D5016;text-decoration:none;">${data.email}</a>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:6px 0;font-size:14px;color:#666;">Subject</td>
+        <td style="padding:6px 0;font-size:14px;color:#333;text-align:right;">${subjectLabel}</td>
+      </tr>
+    </table>
+
+    <!-- Message -->
+    <h3 style="margin:0 0 8px;font-size:15px;color:#5C4033;">Message</h3>
+    <div style="background-color:#f9f3e8;border-radius:6px;padding:16px 20px;margin-bottom:24px;">
+      <p style="margin:0;font-size:14px;color:#333;line-height:1.6;white-space:pre-wrap;">${data.message}</p>
+    </div>
+
+    <!-- Reply Button -->
+    <div style="text-align:center;">
+      <a href="mailto:${data.email}?subject=Re: ${subjectLabel} — Besso Ranch" style="display:inline-block;background-color:#2D5016;color:#ffffff;padding:12px 28px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:bold;">Reply to ${data.name}</a>
+    </div>`;
+
+  return buildBaseTemplate(content);
+}
+
+export async function notifyContactForm(data: {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}): Promise<void> {
+  const adminEmails = await getAdminEmails();
+  const subjectLabel = SUBJECT_LABELS[data.subject];
+  const emailSubject = subjectLabel
+    ? `Contact Form: ${subjectLabel}`
+    : 'New Contact Form Message';
+  const html = buildContactFormTemplate(data);
+
+  for (const email of adminEmails) {
+    await sendEmail({
+      to: email,
+      subject: emailSubject,
+      html,
+      type: 'contact_form',
+      replyTo: data.email,
+    });
   }
 }

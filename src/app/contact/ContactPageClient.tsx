@@ -87,14 +87,32 @@ export default function ContactPageClient({ settings }: ContactPageClientProps) 
     { question: faq4Question, answer: faq4Answer, qKey: "contact_faq4_question", aKey: "contact_faq4_answer" },
   ];
 
+  const [errorMessage, setErrorMessage] = useState("");
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("loading");
+    setErrorMessage("");
 
-    // Simulate form submission - replace with actual API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setStatus("success");
-    setFormState({ name: "", email: "", subject: "", message: "" });
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formState),
+      });
+
+      if (res.ok) {
+        setStatus("success");
+        setFormState({ name: "", email: "", subject: "", message: "" });
+      } else {
+        const data = await res.json().catch(() => null);
+        setErrorMessage(data?.error || "Something went wrong. Please try again.");
+        setStatus("error");
+      }
+    } catch {
+      setErrorMessage("Unable to send message. Please check your connection and try again.");
+      setStatus("error");
+    }
   };
 
   return (
@@ -277,6 +295,12 @@ export default function ContactPageClient({ settings }: ContactPageClientProps) 
                       placeholder="How can we help you?"
                     />
                   </div>
+
+                  {status === "error" && errorMessage && (
+                    <div className="bg-barn-red/10 text-barn-red p-4 rounded-lg text-sm">
+                      {errorMessage}
+                    </div>
+                  )}
 
                   <motion.button
                     type="submit"
