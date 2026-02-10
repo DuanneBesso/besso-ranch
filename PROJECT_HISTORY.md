@@ -199,7 +199,7 @@ A unique feature allowing the ranch owner to edit website text directly from the
   - Products (chicken-eggs, soap-lavender)
   - Hero placeholder, OG image
 
-### 18. Gallery Post Management & Hero Image (Feb 10, 2026)
+### 18. Gallery Enhancements, Social Links & OG Image (Feb 10, 2026 — Session 5)
 
 - **Hide/Show Instagram Posts:**
   - Added `hidden Boolean @default(false)` to `InstagramPost` Prisma model, pushed to Railway DB
@@ -209,9 +209,21 @@ A unique feature allowing the ranch owner to edit website text directly from the
 - **Gallery Hero Image:**
   - Replaced duplicate home-page hero (`hero-yucca-valley.jpg` copy) with unique flock photo (IMG_0517)
   - Converted from HEIC to 1920x1080 JPG via `sips`
+- **Social Follow Strip on Gallery Page:**
+  - Added a CTA section between the hero and the photo grid with a short blurb and Instagram + Facebook follow buttons (pill-shaped, warm-brown and forest-green)
+  - Tightened gallery grid padding from `py-16 md:py-24` to `py-6 md:py-8`
+  - Gallery server component now fetches both `instagram_profile_url` and `facebook_profile_url` settings
+  - Added "Facebook Page URL" field to admin Settings under Instagram Integration
+  - Set `facebook_profile_url` to `https://www.facebook.com/BessoRanch/` directly in DB
+- **OG Image (Social Link Preview):**
+  - Replaced generic stock wheat field photo (`og-image.jpg`) with Yucca Valley hero landscape
+  - Cropped to standard 1200x630 OG format so link previews on Facebook, iMessage, Slack, etc. show the actual ranch
+- **Mirrored Project Docs:**
+  - Copied `PROJECT_HISTORY.md` and `BESSO_RANCH_WEBSITE_PLAN.md` into `besso-ranch/` git repo so they're tracked alongside source code
+  - Saved mirroring rule to Claude memory for future sessions
 - **Files created:** 1 (`src/app/api/admin/instagram/posts/route.ts`)
-- **Files modified:** 4 (`prisma/schema.prisma`, `src/app/gallery/page.tsx`, `src/app/api/instagram/posts/route.ts`, `src/components/admin/SettingsForm.tsx`, `public/images/hero-gallery.jpg`)
-- Build passes, committed and pushed to main for auto-deploy
+- **Files modified:** 7 (`prisma/schema.prisma`, `src/app/gallery/page.tsx`, `src/app/gallery/GalleryPageClient.tsx`, `src/app/api/instagram/posts/route.ts`, `src/components/admin/SettingsForm.tsx`, `public/images/hero-gallery.jpg`, `public/images/og-image.jpg`)
+- All changes committed and pushed to main for auto-deploy
 
 ### 17. Instagram Gallery Page (Feb 9, 2026)
 
