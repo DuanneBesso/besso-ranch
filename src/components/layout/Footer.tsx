@@ -14,6 +14,7 @@ const quickLinks = [
 
 const productLinks = [
   { name: "Eggs", href: "/products/eggs" },
+  { name: "Fertile Hatching Eggs", href: "/products/fertile-eggs" },
   { name: "Live Poultry", href: "/products/poultry" },
   { name: "Goat Milk Products", href: "/products/goat-milk" },
 ];
