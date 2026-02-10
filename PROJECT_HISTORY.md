@@ -199,6 +199,15 @@ A unique feature allowing the ranch owner to edit website text directly from the
   - Products (chicken-eggs, soap-lavender)
   - Hero placeholder, OG image
 
+### 26. SEO Metadata & Legal Cross-Links (Feb 10, 2026 — Session 5)
+
+- **Home page metadata:** Added `export const metadata` with full title ("Besso Ranch | Farm Fresh Eggs, Live Poultry & Goat Milk Products — Yucca Valley, CA") and description for search engines. Previously relied only on root layout base metadata.
+- **Cart & checkout metadata:** These pages are `"use client"` so can't export metadata directly. Added `layout.tsx` wrappers for `/cart` and `/checkout` (covers checkout, success, cancel) with proper titles and descriptions.
+- **Privacy Policy cross-links:** Added footer note linking to Terms of Service and Shipping & Returns, matching the pattern already used on the other two legal pages.
+- **Files created:** 2 (`src/app/cart/layout.tsx`, `src/app/checkout/layout.tsx`)
+- **Files modified:** 2 (`src/app/page.tsx`, `src/app/privacy/page.tsx`)
+- Build passes, committed and pushed to main for auto-deploy
+
 ### 25. Footer Contact Info — Dynamic from Database (Feb 10, 2026 — Session 5)
 
 - **Problem:** Phone number on the contact page didn't match the footer. The DB `contact_phone` setting had a placeholder `(760) 555-1234` while the footer hardcoded `(818) 732-1248`
