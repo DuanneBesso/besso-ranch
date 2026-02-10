@@ -199,6 +199,22 @@ A unique feature allowing the ranch owner to edit website text directly from the
   - Products (chicken-eggs, soap-lavender)
   - Hero placeholder, OG image
 
+### 21. Farm Journal Fix — Blog Detail Page, Hero & Content (Feb 10, 2026 — Session 5)
+
+- **Blog detail page created:** `/blog/[slug]` with server component + `BlogPostClient.tsx`
+  - Renders markdown content via `react-markdown` with Tailwind Typography (`@tailwindcss/typography`) prose styling
+  - Featured image hero with gradient overlay, or gradient-only fallback if no image
+  - Category badge, publish date, tags display, "Back to Farm Journal" navigation
+  - This was completely missing — "Read Article" links previously went to 404
+- **Blog hero image:** Replaced stock Death Valley sand dunes (`hero-blog.jpg`) with Yucca Valley Joshua Tree landscape
+- **Blog content updated in database:**
+  - "Welcome to Besso Ranch" — rewritten with real ranch story, mission, what the journal will cover. Added featured image and tags.
+  - "Why We Feed Corn-Free, Soy-Free" (new post) — article about feed philosophy, what the birds eat, and why it matters
+- **New dependencies:** `react-markdown`, `@tailwindcss/typography`
+- **Files created:** 2 (`src/app/blog/[slug]/page.tsx`, `src/app/blog/[slug]/BlogPostClient.tsx`)
+- **Files modified:** 3 (`package.json`, `tailwind.config.ts`, `public/images/hero-blog.jpg`)
+- Build passes, committed and pushed to main for auto-deploy
+
 ### 20. Fertile Hatching Eggs Product Page (Feb 10, 2026 — Session 5)
 
 - **New product category:** "Fertile Eggs" added to admin ProductForm with chicken, duck, turkey, goose subcategories
