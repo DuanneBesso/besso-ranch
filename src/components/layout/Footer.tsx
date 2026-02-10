@@ -26,12 +26,16 @@ const legalLinks = [
 
 export default function Footer() {
   const [logoUrl, setLogoUrl] = useState("/images/logo.png");
+  const [instagramUrl, setInstagramUrl] = useState("https://www.instagram.com/bessoranch/");
+  const [facebookUrl, setFacebookUrl] = useState("https://www.facebook.com/BessoRanch/");
 
   useEffect(() => {
     fetch("/api/settings/public")
       .then((res) => res.json())
       .then((data) => {
         if (data.site_logo) setLogoUrl(data.site_logo);
+        if (data.instagram_profile_url) setInstagramUrl(data.instagram_profile_url);
+        if (data.facebook_profile_url) setFacebookUrl(data.facebook_profile_url);
       })
       .catch(() => {});
   }, []);
@@ -62,7 +66,7 @@ export default function Footer() {
             </p>
             <div className="flex space-x-4">
               <a
-                href="https://instagram.com"
+                href={instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-cream/70 hover:text-soft-gold transition-colors"
@@ -70,7 +74,7 @@ export default function Footer() {
                 <Instagram className="w-5 h-5" />
               </a>
               <a
-                href="https://facebook.com"
+                href={facebookUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-cream/70 hover:text-soft-gold transition-colors"

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Calendar, ArrowRight } from "lucide-react";
@@ -30,6 +31,8 @@ const categories = [
 ];
 
 export default function BlogPageClient({ posts, settings }: BlogPageClientProps) {
+  const [selectedCategory, setSelectedCategory] = useState("all");
+
   // Hero settings
   const heroAccent = settings.blog_hero_accent || "Stories from the Ranch";
   const heroTitle = settings.blog_hero_title || "Farm Journal";
@@ -39,8 +42,15 @@ export default function BlogPageClient({ posts, settings }: BlogPageClientProps)
   const newsletterTitle = settings.blog_newsletter_title || "Never Miss a Post";
   const newsletterSubtitle = settings.blog_newsletter_subtitle || "Subscribe to our newsletter for farm updates, seasonal guides, and exclusive recipes.";
 
-  const featuredPost = posts[0];
-  const remainingPosts = posts.slice(1);
+  const filteredPosts = useMemo(() =>
+    selectedCategory === "all"
+      ? posts
+      : posts.filter(p => p.category === selectedCategory),
+    [posts, selectedCategory]
+  );
+
+  const featuredPost = filteredPosts[0];
+  const remainingPosts = filteredPosts.slice(1);
 
   return (
     <>
@@ -96,7 +106,12 @@ export default function BlogPageClient({ posts, settings }: BlogPageClientProps)
             {categories.map((cat) => (
               <button
                 key={cat.id}
-                className="px-4 py-2 rounded-full text-sm font-medium bg-white text-charcoal hover:bg-barn-red hover:text-white transition-all"
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  selectedCategory === cat.id
+                    ? "bg-barn-red text-white"
+                    : "bg-white text-charcoal hover:bg-barn-red/10"
+                }`}
               >
                 {cat.name}
               </button>
