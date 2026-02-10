@@ -199,6 +199,15 @@ A unique feature allowing the ranch owner to edit website text directly from the
   - Products (chicken-eggs, soap-lavender)
   - Hero placeholder, OG image
 
+### 25. Footer Contact Info — Dynamic from Database (Feb 10, 2026 — Session 5)
+
+- **Problem:** Phone number on the contact page didn't match the footer. The DB `contact_phone` setting had a placeholder `(760) 555-1234` while the footer hardcoded `(818) 732-1248`
+- **DB fix:** Updated `contact_phone` setting to `(818) 732-1248`
+- **Code fix:** Made the footer pull email, phone, and location from the public settings API (same source as the contact page) instead of hardcoded values. Now if the owner updates contact info via inline editing, the footer automatically stays in sync.
+- Added `contact_email`, `contact_phone`, `contact_location` to `PUBLIC_SETTING_KEYS` whitelist
+- **Files modified:** 2 (`Footer.tsx`, `src/app/api/settings/public/route.ts`)
+- Build passes, committed and pushed to main for auto-deploy
+
 ### 24. Legal Pages — Privacy Policy, Terms of Service, Shipping & Returns (Feb 10, 2026 — Session 5)
 
 - **Problem:** Footer linked to `/privacy`, `/terms`, and `/shipping` but all three returned 404
