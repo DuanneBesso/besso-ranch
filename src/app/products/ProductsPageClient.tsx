@@ -29,6 +29,7 @@ interface ProductsPageClientProps {
 const categories = [
   { id: "all", name: "All Products" },
   { id: "eggs", name: "Eggs" },
+  { id: "fertile-eggs", name: "Fertile Hatching Eggs" },
   { id: "poultry", name: "Live Poultry" },
   { id: "goat-milk", name: "Goat Milk Products" },
 ];
