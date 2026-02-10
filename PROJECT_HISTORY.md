@@ -1,7 +1,7 @@
 # Besso Ranch Website - Project History & Development Log
 
 **Created:** February 8, 2026
-**Last Updated:** February 10, 2026 (Session 5)
+**Last Updated:** February 10, 2026 (Session 5, continued)
 
 ---
 
@@ -198,6 +198,26 @@ A unique feature allowing the ranch owner to edit website text directly from the
   - Animals (chickens, ducks, goats, turkeys, geese)
   - Products (chicken-eggs, soap-lavender)
   - Hero placeholder, OG image
+
+### 20. Fertile Hatching Eggs Product Page (Feb 10, 2026 — Session 5)
+
+- **New product category:** "Fertile Eggs" added to admin ProductForm with chicken, duck, turkey, goose subcategories
+- **Public category page:** `/products/fertile-eggs` with barn-red hero ("Hatch Your Own Flock"), product grid, and "Why Choose Our Fertile Eggs" info section with 6 icon cards (Free Range Parents, Organic Feed, No Corn No Soy, No Antibiotics, Heritage Breeds, Handled with Care)
+- **Product detail page:** `/products/fertile-eggs/[slug]` with structured data and breadcrumbs
+- Product cards display breed badge, fertility rate, and minimum order from specifications JSON
+- "Coming Soon" empty state with contact CTA when no products are listed yet
+- Added "Fertile Hatching Eggs" to header Products dropdown and products landing page category filter
+- **Files created:** 3 (`page.tsx`, `FertileEggsPageClient.tsx`, `[slug]/page.tsx`)
+- **Files modified:** 3 (`ProductForm.tsx`, `Header.tsx`, `ProductsPageClient.tsx`)
+- Build passes, committed and pushed to main for auto-deploy
+
+### 19. Product Page Icons & No Corn No Soy (Feb 10, 2026 — Session 5)
+
+- **Eggs page:** Added "No Corn, No Soy" category (WheatOff icon) to "Why Our Eggs Are Different" section, plus Lucide icons above all 5 items (TreePine, Leaf, WheatOff, ShieldCheck, Clock). Grid updated to 5-column layout.
+- **Poultry page:** Replaced plain red dot bullets with meaningful Lucide icons (Leaf, Home, Scale, Heart, Truck) in the "Before You Buy" section
+- **Goat Milk page:** Added Lucide icons (Leaf, Droplets, Wind, Scale) above each card in the "Why Goat Milk?" section, centered text
+- **Files modified:** 3 (`EggsPageClient.tsx`, `PoultryPageClient.tsx`, `GoatMilkPageClient.tsx`)
+- Build passes, committed and pushed to main for auto-deploy
 
 ### 18. Gallery Enhancements, Social Links & OG Image (Feb 10, 2026 — Session 5)
 
