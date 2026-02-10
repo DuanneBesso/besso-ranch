@@ -1,7 +1,13 @@
+import { Metadata } from "next";
 import { Header, Footer } from "@/components/layout";
 import { Hero, Introduction, FeaturedProducts, MeetTheAnimals, Newsletter } from "@/components/home";
 import prisma from "@/lib/db";
 import { localBusinessJsonLd } from "@/lib/structured-data";
+
+export const metadata: Metadata = {
+  title: "Besso Ranch | Farm Fresh Eggs, Live Poultry & Goat Milk Products — Yucca Valley, CA",
+  description: "Sustainable family farm in Yucca Valley, California. Shop farm fresh eggs, live poultry, fertile hatching eggs, and handmade goat milk products. No corn, no soy, no antibiotics.",
+};
 
 export const dynamic = 'force-dynamic';
 

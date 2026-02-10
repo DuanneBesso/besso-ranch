@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Link from "next/link";
 import { Header, Footer } from "@/components/layout";
 
 export const metadata: Metadata = {
@@ -104,6 +105,10 @@ export default function PrivacyPolicyPage() {
                 <li><strong>Phone:</strong> (818) 732-1248</li>
                 <li><strong>Location:</strong> Yucca Valley, CA 92284</li>
               </ul>
+
+              <p className="text-sm text-charcoal-300 mt-8">
+                See also our <Link href="/terms">Terms of Service</Link> and <Link href="/shipping">Shipping &amp; Returns</Link>.
+              </p>
             </div>
           </div>
         </section>
