@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Leaf, Droplets, Wind, Scale } from "lucide-react";
 import AddToCartButton from "@/components/cart/AddToCartButton";
 
 interface Product {
@@ -149,12 +149,13 @@ export default function GoatMilkPageClient({ products }: GoatMilkPageClientProps
             </p>
             <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
               {[
-                { title: "Organic & Natural", desc: "Our goats are fed certified organic feed with no antibiotics or hormones — only organic natural remedies" },
-                { title: "Gentle & Nourishing", desc: "The proteins in goat milk are smaller and easier for skin to absorb" },
-                { title: "Natural Exfoliation", desc: "Lactic acid gently removes dead skin cells" },
-                { title: "pH Balanced", desc: "Similar to human skin's natural pH level" },
+                { title: "Organic & Natural", desc: "Our goats are fed certified organic feed with no antibiotics or hormones — only organic natural remedies", icon: Leaf },
+                { title: "Gentle & Nourishing", desc: "The proteins in goat milk are smaller and easier for skin to absorb", icon: Droplets },
+                { title: "Natural Exfoliation", desc: "Lactic acid gently removes dead skin cells", icon: Wind },
+                { title: "pH Balanced", desc: "Similar to human skin's natural pH level", icon: Scale },
               ].map((item) => (
-                <div key={item.title} className="bg-white p-6 rounded-xl">
+                <div key={item.title} className="bg-white p-6 rounded-xl text-center">
+                  <item.icon className="w-8 h-8 text-forest-green mx-auto mb-3" />
                   <h3 className="font-heading text-warm-brown mb-2">{item.title}</h3>
                   <p className="text-charcoal-400 text-sm">{item.desc}</p>
                 </div>

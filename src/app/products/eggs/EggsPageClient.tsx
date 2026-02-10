@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { TreePine, Leaf, ShieldCheck, Clock, WheatOff } from "lucide-react";
 import AddToCartButton from "@/components/cart/AddToCartButton";
 
 interface Product {
@@ -119,14 +120,16 @@ export default function EggsPageClient({ products }: EggsPageClientProps) {
         <div className="container-custom">
           <div className="max-w-3xl mx-auto">
             <h2 className="section-title text-center mb-8">Why Our Eggs Are Different</h2>
-            <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 text-center">
               {[
-                { title: "Free Range", desc: "Our birds roam freely, foraging for bugs and greens" },
-                { title: "Organic", desc: "Fed certified organic feed with no synthetic pesticides or GMOs" },
-                { title: "No Antibiotics", desc: "Raised naturally without medications" },
-                { title: "Fresh Daily", desc: "Eggs collected and packaged the same day" },
+                { title: "Free Range", desc: "Our birds roam freely, foraging for bugs and greens", icon: TreePine },
+                { title: "Organic Feed", desc: "Fed certified organic feed with no synthetic pesticides or GMOs", icon: Leaf },
+                { title: "No Corn, No Soy", desc: "Our feed is free from corn and soy for healthier birds and richer eggs", icon: WheatOff },
+                { title: "No Antibiotics", desc: "Raised naturally without medications", icon: ShieldCheck },
+                { title: "Fresh Daily", desc: "Eggs collected and packaged the same day", icon: Clock },
               ].map((item) => (
                 <div key={item.title} className="p-4">
+                  <item.icon className="w-8 h-8 text-barn-red mx-auto mb-3" />
                   <h3 className="font-heading text-warm-brown mb-2">{item.title}</h3>
                   <p className="text-charcoal-400 text-sm">{item.desc}</p>
                 </div>
