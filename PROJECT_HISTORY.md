@@ -199,6 +199,14 @@ A unique feature allowing the ranch owner to edit website text directly from the
   - Products (chicken-eggs, soap-lavender)
   - Hero placeholder, OG image
 
+### 22. Polish Pass — Footer Links, Blog Filters, Blog Images (Feb 10, 2026 — Session 5)
+
+- **Footer social links fixed:** Instagram and Facebook icons in the footer were pointing to generic `https://instagram.com` and `https://facebook.com`. Now pull real URLs from DB settings (`instagram_profile_url`, `facebook_profile_url`) with Besso Ranch defaults. Added both keys to the public settings API whitelist.
+- **Blog category filters wired up:** Filter buttons on the Farm Journal page were non-functional (rendered but no onClick/state). Added `selectedCategory` state, `useMemo` filtering, and active button styling matching the products page pattern.
+- **Blog post featured images differentiated:** Both posts shared the same flock photo. Changed second post ("Why We Feed Corn-Free, Soy-Free") to use Yucca Valley landscape so they're visually distinct.
+- **Files modified:** 3 (`Footer.tsx`, `BlogPageClient.tsx`, `src/app/api/settings/public/route.ts`)
+- Build passes, committed and pushed to main for auto-deploy
+
 ### 21. Farm Journal Fix — Blog Detail Page, Hero & Content (Feb 10, 2026 — Session 5)
 
 - **Blog detail page created:** `/blog/[slug]` with server component + `BlogPostClient.tsx`
