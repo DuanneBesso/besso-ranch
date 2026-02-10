@@ -199,6 +199,11 @@ A unique feature allowing the ranch owner to edit website text directly from the
   - Products (chicken-eggs, soap-lavender)
   - Hero placeholder, OG image
 
+### 23. Footer — Add Fertile Hatching Eggs Link (Feb 10, 2026 — Session 5)
+
+- Added "Fertile Hatching Eggs" to footer product links to match header nav and products page filter
+- **Files modified:** 1 (`Footer.tsx`)
+
 ### 22. Polish Pass — Footer Links, Blog Filters, Blog Images (Feb 10, 2026 — Session 5)
 
 - **Footer social links fixed:** Instagram and Facebook icons in the footer were pointing to generic `https://instagram.com` and `https://facebook.com`. Now pull real URLs from DB settings (`instagram_profile_url`, `facebook_profile_url`) with Besso Ranch defaults. Added both keys to the public settings API whitelist.
