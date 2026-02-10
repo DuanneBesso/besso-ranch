@@ -16,7 +16,7 @@
 
 ## Current Status: Phase 1 - Core Launch (In Progress)
 
-The project is live at bessoranch.com and auto-deploys from GitHub. The front-end pages, admin dashboard, database, cart system, checkout, inline editing, whimsical animations, SEO optimization, email notification system, contact form email integration, Instagram Gallery (with hide/show post management), and gallery hero image are all built and deployed. The remaining Phase 1 item is testing/QA.
+The project is live at bessoranch.com and auto-deploys from GitHub. The front-end pages, admin dashboard, database, cart system, checkout, inline editing, whimsical animations, SEO optimization, email notification system, contact form email integration, Instagram Gallery (with hide/show post management), gallery hero image, fertile eggs product page, blog detail pages, and legal pages (Privacy, Terms, Shipping & Returns) are all built and deployed. The remaining Phase 1 item is testing/QA.
 
 ---
 
@@ -198,6 +198,16 @@ A unique feature allowing the ranch owner to edit website text directly from the
   - Animals (chickens, ducks, goats, turkeys, geese)
   - Products (chicken-eggs, soap-lavender)
   - Hero placeholder, OG image
+
+### 24. Legal Pages — Privacy Policy, Terms of Service, Shipping & Returns (Feb 10, 2026 — Session 5)
+
+- **Problem:** Footer linked to `/privacy`, `/terms`, and `/shipping` but all three returned 404
+- **Privacy Policy** (`/privacy`) — Covers data collection (order, contact, account info), automatic data collection, how data is used, Stripe payment processing, data security, cookies (essential only), third-party services (Stripe, Vercel, Instagram/Facebook), user rights (access, correction, deletion, opt-out), children's privacy, and contact info
+- **Terms of Service** (`/terms`) — Covers agreement to terms, product descriptions (eggs, live poultry, fertile eggs, goat milk with natural variation disclaimers), orders and payment (Stripe), pricing, pickup and delivery (local pickup at ranch, 25-mile delivery radius, live animals pickup only), intellectual property, user conduct, disclaimer of warranties, limitation of liability, governing law (California / San Bernardino County), and contact info
+- **Shipping & Returns** (`/shipping`) — Covers local pickup (Yucca Valley), local delivery (25-mile radius covering Joshua Tree and Twentynine Palms), live animal policies (in-person pickup only, sales final), fertile egg policies (local pickup only, sales final), refund eligibility (eggs and goat milk products within 24 hours with photos), non-eligible returns (live animals, fertile eggs, change of mind), order cancellations, damaged/incorrect orders, and contact info
+- All three pages use consistent styling: warm-brown → forest-green gradient hero, Tailwind Typography prose classes, same contact info block
+- **Files created:** 3 (`src/app/privacy/page.tsx`, `src/app/terms/page.tsx`, `src/app/shipping/page.tsx`)
+- Build passes, committed and pushed to main for auto-deploy
 
 ### 23. Footer — Add Fertile Hatching Eggs Link (Feb 10, 2026 — Session 5)
 
@@ -411,8 +421,12 @@ besso-ranch/
 │   │   ├── sitemap.ts         # Dynamic XML sitemap
 │   │   ├── about/             # About section (5 pages)
 │   │   ├── products/          # Products section (4 pages)
-│   │   ├── blog/              # Farm Journal
+│   │   ├── blog/              # Farm Journal (list + [slug] detail)
 │   │   ├── contact/           # Contact page
+│   │   ├── gallery/           # Instagram Gallery
+│   │   ├── privacy/           # Privacy Policy
+│   │   ├── terms/             # Terms of Service
+│   │   ├── shipping/          # Shipping & Returns
 │   │   ├── cart/              # Cart page
 │   │   ├── checkout/          # Checkout, success, cancel pages
 │   │   ├── admin/             # Admin dashboard (7+ pages)
