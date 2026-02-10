@@ -23,12 +23,6 @@ interface InstagramMediaResponse {
   };
 }
 
-interface InstagramTokenResponse {
-  access_token: string;
-  token_type: string;
-  expires_in: number;
-}
-
 /**
  * Fetch posts from the Instagram Graph API.
  * Handles pagination up to the specified limit.
@@ -41,7 +35,8 @@ export async function fetchInstagramPosts(
   const fields = 'id,caption,media_type,media_url,thumbnail_url,permalink,timestamp';
   const pageSize = Math.min(limit, 100); // Instagram API max per page is 100
 
-  const url = `https://graph.instagram.com/v18.0/${userId}/media?fields=${fields}&limit=${pageSize}&access_token=${accessToken}`;
+  // Use Facebook Graph API endpoint (works with Page tokens; graph.instagram.com requires user tokens)
+  const url = `https://graph.facebook.com/v24.0/${userId}/media?fields=${fields}&limit=${pageSize}&access_token=${accessToken}`;
 
   const posts: InstagramMediaItem[] = [];
   let nextUrl: string | null = url;
@@ -66,28 +61,28 @@ export async function fetchInstagramPosts(
 }
 
 /**
- * Refresh a long-lived Instagram access token.
- * Tokens should be refreshed before they expire (every 60 days).
- * The plan auto-refreshes on the 1st and 15th of each month.
+ * Validate that the access token is still working.
+ * Page tokens derived from long-lived user tokens don't expire,
+ * so this just confirms the token is still valid.
  */
 export async function refreshInstagramToken(
   accessToken: string
 ): Promise<{ accessToken: string; expiresIn: number }> {
-  const url = `https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=${accessToken}`;
+  // Page tokens don't expire, so we just validate it still works
+  const url = `https://graph.facebook.com/v24.0/me?access_token=${accessToken}`;
 
   const response = await fetch(url);
 
   if (!response.ok) {
     const error = await response.json();
     throw new Error(
-      `Token refresh error: ${error.error?.message || response.statusText}`
+      `Token validation error: ${error.error?.message || response.statusText}`
     );
   }
 
-  const data: InstagramTokenResponse = await response.json();
-
+  // Token is valid — return it as-is
   return {
-    accessToken: data.access_token,
-    expiresIn: data.expires_in,
+    accessToken,
+    expiresIn: 0, // Page tokens don't expire
   };
 }
