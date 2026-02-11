@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Header, Footer } from "@/components/layout";
 
 export const metadata: Metadata = {
-  title: "Terms of Service | Besso Ranch",
+  title: "Terms of Service",
   description: "Terms and conditions for using the Besso Ranch website and purchasing our products.",
 };
 

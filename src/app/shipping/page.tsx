@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Header, Footer } from "@/components/layout";
 
 export const metadata: Metadata = {
-  title: "Shipping & Returns | Besso Ranch",
+  title: "Shipping & Returns",
   description: "Pickup, delivery, and return policies for Besso Ranch products.",
 };
 

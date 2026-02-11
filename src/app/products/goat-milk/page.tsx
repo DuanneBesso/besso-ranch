@@ -5,7 +5,7 @@ import { breadcrumbJsonLd } from "@/lib/structured-data";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Goat Milk Products | Besso Ranch",
+  title: "Goat Milk Products",
   description: "Handcrafted goat milk soaps, lotions, and lip balms from our Nigerian Dwarf goats at Besso Ranch in Yucca Valley, CA.",
 };
 

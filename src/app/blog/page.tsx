@@ -4,7 +4,7 @@ import prisma from "@/lib/db";
 import BlogPageClient from "./BlogPageClient";
 
 export const metadata: Metadata = {
-  title: "Farm Journal | Besso Ranch",
+  title: "Farm Journal",
   description: "Updates, guides, recipes, and stories from our sustainable farm in the California High Desert.",
 };
 

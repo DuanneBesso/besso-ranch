@@ -4,7 +4,7 @@ import prisma from "@/lib/db";
 import GalleryPageClient from "./GalleryPageClient";
 
 export const metadata: Metadata = {
-  title: "Gallery | Besso Ranch",
+  title: "Gallery",
   description: "Photos from life on the ranch — our animals, the land, and the beauty of the California High Desert.",
 };
 

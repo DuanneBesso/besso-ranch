@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const post = await getPost(slug);
   if (!post) return { title: "Post Not Found" };
   return {
-    title: post.metaTitle || `${post.title} | Besso Ranch Farm Journal`,
+    title: post.metaTitle || post.title,
     description: post.metaDescription || post.excerpt || `${post.title} — from the Besso Ranch Farm Journal`,
   };
 }

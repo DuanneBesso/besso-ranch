@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Header, Footer } from "@/components/layout";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Besso Ranch",
+  title: "Privacy Policy",
   description: "How Besso Ranch collects, uses, and protects your personal information.",
 };
 

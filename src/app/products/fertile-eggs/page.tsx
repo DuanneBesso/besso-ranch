@@ -5,7 +5,7 @@ import { breadcrumbJsonLd } from "@/lib/structured-data";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Fertile Hatching Eggs | Besso Ranch",
+  title: "Fertile Hatching Eggs",
   description: "Fertile hatching eggs from heritage and specialty breeds at Besso Ranch in Yucca Valley, CA. Hatch your own flock from our healthy, free-range birds.",
 };
 

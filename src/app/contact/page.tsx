@@ -5,7 +5,7 @@ import ContactPageClient from "./ContactPageClient";
 import { faqPageJsonLd } from "@/lib/structured-data";
 
 export const metadata: Metadata = {
-  title: "Contact Us | Besso Ranch",
+  title: "Contact Us",
   description: "Get in touch with Besso Ranch. Questions about products, farm tours, or wholesale inquiries - we'd love to hear from you.",
 };
 

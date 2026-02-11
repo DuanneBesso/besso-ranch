@@ -5,7 +5,7 @@ import { breadcrumbJsonLd } from "@/lib/structured-data";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Farm Fresh Eggs | Besso Ranch",
+  title: "Farm Fresh Eggs",
   description: "Farm fresh chicken, duck, turkey, and goose eggs from free-range birds at Besso Ranch in Yucca Valley, CA.",
 };
 

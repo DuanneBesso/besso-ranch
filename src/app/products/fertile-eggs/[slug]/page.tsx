@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const product = await getProduct(slug);
   if (!product) return { title: "Product Not Found" };
   return {
-    title: `${product.name} | Besso Ranch`,
+    title: product.name,
     description: product.description || `${product.name} from Besso Ranch`,
   };
 }

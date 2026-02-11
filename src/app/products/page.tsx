@@ -33,7 +33,7 @@ async function getSettings() {
 }
 
 export const metadata = {
-  title: 'Products | Besso Ranch',
+  title: 'Products',
   description: 'Farm fresh eggs, live poultry, and handcrafted goat milk products from Besso Ranch in Yucca Valley, CA.',
 };
 

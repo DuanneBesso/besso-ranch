@@ -5,7 +5,7 @@ import { breadcrumbJsonLd } from "@/lib/structured-data";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Live Poultry | Besso Ranch",
+  title: "Live Poultry",
   description: "Healthy, well-socialized chickens, ducks, turkeys, and geese available for local pickup at Besso Ranch in Yucca Valley, CA.",
 };
 

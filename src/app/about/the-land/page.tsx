@@ -3,7 +3,7 @@ import prisma from "@/lib/db";
 import TheLandClient from "./TheLandClient";
 
 export const metadata: Metadata = {
-  title: "The Land | Besso Ranch",
+  title: "The Land",
   description: "Explore the high desert landscape of Besso Ranch in Yucca Valley, CA - where Joshua trees meet sustainable farming on our Mojave Desert homestead.",
 };
 
