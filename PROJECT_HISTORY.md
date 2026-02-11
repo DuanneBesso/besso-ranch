@@ -199,6 +199,14 @@ A unique feature allowing the ranch owner to edit website text directly from the
   - Products (chicken-eggs, soap-lavender)
   - Hero placeholder, OG image
 
+### 28. Cleanup — Remove Debug Logs & Add Aria Labels (Feb 10, 2026 — Session 5)
+
+- **Debug console.logs removed:** Cleared 5 debug `console.log` statements from `EditModeContext.tsx` (4 logs for admin status checking) and `EditModeToolbar.tsx` (1 mounted log). Browser console is now clean for end users.
+- **Stripe webhook logs cleaned:** Removed informational `console.log` calls (order paid, order cancelled, unhandled event type). Kept `console.error` for real failures (signature verification, missing orders, payment failures). Upgraded `payment_failed` from log to error.
+- **CartDrawer accessibility:** Added `aria-label` to close button ("Close cart"), quantity buttons ("Decrease quantity" / "Increase quantity"), and remove button ("Remove {item name}") for screen reader users.
+- **Files modified:** 4 (`EditModeContext.tsx`, `EditModeToolbar.tsx`, `stripe/route.ts`, `CartDrawer.tsx`)
+- Build passes, committed and pushed to main for auto-deploy
+
 ### 27. Fix Cart Page — Use Real CartContext (Feb 10, 2026 — Session 5)
 
 - **Critical bug fixed:** The `/cart` page had hardcoded mock products (Farm Fresh Chicken Eggs, Goat Milk Soap - Lavender) via local `useState` instead of using the CartContext. Customers would see fake items instead of what they actually added.
