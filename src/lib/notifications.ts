@@ -278,6 +278,94 @@ function buildNewOrderTemplate(order: OrderForNotification): string {
   return buildBaseTemplate(content);
 }
 
+function buildOrderConfirmationTemplate(order: OrderForNotification): string {
+  const itemRows = order.items
+    .map(
+      (item) => `
+      <tr>
+        <td style="padding:8px 0;border-bottom:1px solid #f0ebe3;font-size:14px;color:#333;">${item.productName}</td>
+        <td style="padding:8px 0;border-bottom:1px solid #f0ebe3;font-size:14px;color:#333;text-align:center;">${item.quantity}</td>
+        <td style="padding:8px 0;border-bottom:1px solid #f0ebe3;font-size:14px;color:#333;text-align:right;">$${item.total.toFixed(2)}</td>
+      </tr>`
+    )
+    .join('');
+
+  const deliveryInfo =
+    order.deliveryMethod === 'delivery'
+      ? `<p style="margin:0;font-size:14px;color:#333;">Your order will be delivered to:<br><strong>${order.deliveryAddress || ''}, ${order.deliveryCity || ''}, ${order.deliveryState || ''} ${order.deliveryZip || ''}</strong></p>`
+      : `<p style="margin:0;font-size:14px;color:#333;">Your order will be available for <strong>pickup at the ranch</strong>. We'll let you know when it's ready!</p>`;
+
+  const content = `
+    <!-- Banner -->
+    <div style="background-color:#2D5016;border-radius:6px;padding:16px 20px;margin-bottom:24px;text-align:center;">
+      <h2 style="margin:0;color:#ffffff;font-size:20px;">Order Confirmed!</h2>
+    </div>
+
+    <p style="font-size:15px;color:#333;line-height:1.6;margin:0 0 20px;">
+      Hi ${order.customerName}, thank you for your order! We've received your payment and your farm-fresh products are on their way to being prepared.
+    </p>
+
+    <!-- Order Number -->
+    <div style="background-color:#f9f3e8;border-radius:6px;padding:16px 20px;margin-bottom:20px;text-align:center;">
+      <p style="margin:0;font-size:13px;color:#666;text-transform:uppercase;letter-spacing:1px;">Order Number</p>
+      <p style="margin:4px 0 0;font-size:22px;color:#5C4033;font-weight:bold;">${order.orderNumber}</p>
+    </div>
+
+    <!-- Items -->
+    <h3 style="margin:0 0 8px;font-size:15px;color:#5C4033;">Your Items</h3>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td style="padding:8px 0;border-bottom:2px solid #5C4033;font-size:12px;color:#666;text-transform:uppercase;">Item</td>
+        <td style="padding:8px 0;border-bottom:2px solid #5C4033;font-size:12px;color:#666;text-transform:uppercase;text-align:center;">Qty</td>
+        <td style="padding:8px 0;border-bottom:2px solid #5C4033;font-size:12px;color:#666;text-transform:uppercase;text-align:right;">Total</td>
+      </tr>
+      ${itemRows}
+    </table>
+
+    <!-- Totals -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:12px;">
+      <tr>
+        <td style="padding:4px 0;font-size:14px;color:#666;">Subtotal</td>
+        <td style="padding:4px 0;font-size:14px;color:#333;text-align:right;">$${order.subtotal.toFixed(2)}</td>
+      </tr>
+      ${order.deliveryFee > 0 ? `
+      <tr>
+        <td style="padding:4px 0;font-size:14px;color:#666;">Delivery Fee</td>
+        <td style="padding:4px 0;font-size:14px;color:#333;text-align:right;">$${order.deliveryFee.toFixed(2)}</td>
+      </tr>` : ''}
+      ${order.tax > 0 ? `
+      <tr>
+        <td style="padding:4px 0;font-size:14px;color:#666;">Tax</td>
+        <td style="padding:4px 0;font-size:14px;color:#333;text-align:right;">$${order.tax.toFixed(2)}</td>
+      </tr>` : ''}
+      <tr>
+        <td style="padding:8px 0;font-size:16px;color:#5C4033;font-weight:bold;border-top:2px solid #5C4033;">Total</td>
+        <td style="padding:8px 0;font-size:16px;color:#2D5016;font-weight:bold;text-align:right;border-top:2px solid #5C4033;">$${order.total.toFixed(2)}</td>
+      </tr>
+    </table>
+
+    <!-- Fulfillment -->
+    <h3 style="margin:20px 0 8px;font-size:15px;color:#5C4033;">Fulfillment</h3>
+    ${deliveryInfo}
+    ${order.deliveryNotes ? `<p style="margin:8px 0 0;font-size:13px;color:#666;"><em>Your note: ${order.deliveryNotes}</em></p>` : ''}
+
+    <!-- What Happens Next -->
+    <div style="background-color:#f9f3e8;border-radius:6px;padding:16px 20px;margin:24px 0;">
+      <h3 style="margin:0 0 8px;font-size:15px;color:#5C4033;">What Happens Next?</h3>
+      <ol style="margin:0;padding:0 0 0 20px;font-size:14px;color:#333;line-height:1.8;">
+        <li>We'll prepare your farm-fresh order with care.</li>
+        <li>You'll receive an update when it's ready.</li>
+        <li>${order.deliveryMethod === 'delivery' ? "We'll deliver it right to your door!" : 'Come pick it up at Besso Ranch!'}</li>
+      </ol>
+    </div>
+
+    <p style="font-size:14px;color:#666;margin:0;">
+      Questions about your order? <a href="${SITE_URL}/contact" style="color:#2D5016;text-decoration:none;font-weight:bold;">Contact us</a>
+    </p>`;
+
+  return buildBaseTemplate(content);
+}
+
 const STATUS_MESSAGES: Record<string, { headline: string; message: string }> = {
   processing: {
     headline: 'Your order is being prepared!',
@@ -386,6 +474,18 @@ function buildLowStockTemplate(product: ProductForNotification): string {
 // ============================================
 // PUBLIC API
 // ============================================
+
+export async function notifyOrderConfirmation(order: OrderForNotification): Promise<void> {
+  const subject = `Order Confirmed — ${order.orderNumber} | Besso Ranch`;
+  const html = buildOrderConfirmationTemplate(order);
+
+  await sendEmail({
+    to: order.customerEmail,
+    subject,
+    html,
+    type: 'order_confirmation',
+  });
+}
 
 export async function notifyNewOrder(order: OrderForNotification): Promise<void> {
   const adminEmails = await getAdminEmails();
