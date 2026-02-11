@@ -154,8 +154,8 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
       }
     }
 
-    // Notify admin of new order (fire-and-forget)
-    notifyNewOrder({
+    // Send notification emails (awaited so Vercel doesn't kill the function mid-send)
+    const orderData = {
       orderNumber: order.orderNumber,
       customerName: order.customerName,
       customerEmail: order.customerEmail,
@@ -176,31 +176,16 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
         productPrice: item.productPrice,
         total: item.total,
       })),
-    }).catch((err) => console.error('[Notifications] New order notification failed:', err));
+    };
 
-    // Send confirmation email to customer (fire-and-forget)
-    notifyOrderConfirmation({
-      orderNumber: order.orderNumber,
-      customerName: order.customerName,
-      customerEmail: order.customerEmail,
-      customerPhone: order.customerPhone,
-      deliveryMethod: order.deliveryMethod,
-      deliveryAddress: order.deliveryAddress,
-      deliveryCity: order.deliveryCity,
-      deliveryState: order.deliveryState,
-      deliveryZip: order.deliveryZip,
-      deliveryNotes: order.deliveryNotes,
-      subtotal: order.subtotal,
-      deliveryFee: order.deliveryFee,
-      tax: order.tax,
-      total: order.total,
-      items: order.items.map((item) => ({
-        productName: item.productName,
-        quantity: item.quantity,
-        productPrice: item.productPrice,
-        total: item.total,
-      })),
-    }).catch((err) => console.error('[Notifications] Order confirmation failed:', err));
+    await Promise.allSettled([
+      notifyNewOrder(orderData).catch((err) =>
+        console.error('[Notifications] New order notification failed:', err)
+      ),
+      notifyOrderConfirmation(orderData).catch((err) =>
+        console.error('[Notifications] Order confirmation failed:', err)
+      ),
+    ]);
 
     // Order successfully marked as paid
   } catch (error) {
