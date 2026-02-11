@@ -16,10 +16,11 @@ function SuccessContent() {
   const { clearCart } = useCart();
   const [schedulingUrl, setSchedulingUrl] = useState(DEFAULT_SCHEDULING_URL);
 
-  // Clear cart on successful payment
+  // Clear cart on successful payment (run once on mount)
   useEffect(() => {
     clearCart();
-  }, [clearCart]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Fetch scheduling URL from settings (allows admin to update it)
   useEffect(() => {
