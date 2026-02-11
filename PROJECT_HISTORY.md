@@ -199,6 +199,14 @@ A unique feature allowing the ranch owner to edit website text directly from the
   - Products (chicken-eggs, soap-lavender)
   - Hero placeholder, OG image
 
+### 30. QA Pass — Fix Duplicate Page Titles & Sitemap Gaps (Feb 10, 2026 — Session 5)
+
+- **Ran automated QA audit** across the full codebase and live site (bessoranch.com). Results: all 37 page routes exist, all navigation links resolve, all imports correct, contact info consistent, all images have alt text, SEO metadata on every page, structured data implemented, robots.txt and sitemap working, all 16 tested live pages load correctly.
+- **FAIL #1 — Duplicate page titles:** 20 pages showed "Products | Besso Ranch | Besso Ranch" in browser tabs because the page-level metadata included "| Besso Ranch" and the root layout template (`%s | Besso Ranch`) appended it again. Fixed by stripping "| Besso Ranch" from all page-level titles (static `metadata` exports and dynamic `generateMetadata` functions).
+- **FAIL #2 — Sitemap missing 6 pages:** `/products`, `/products/fertile-eggs`, `/gallery`, `/privacy`, `/terms`, `/shipping` were not in `sitemap.ts`. Added all six with appropriate `changeFrequency` and `priority` values.
+- **Files modified:** 24 (20 page titles + 4 dynamic detail pages + sitemap.ts)
+- Build passes, committed and pushed to main for auto-deploy
+
 ### 29. Testing & QA Checklist (Feb 10, 2026 — Session 5)
 
 - Created `TESTING_QA_CHECKLIST.md` with 100+ test cases across 14 categories
