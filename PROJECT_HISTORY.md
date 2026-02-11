@@ -1,7 +1,7 @@
 # Besso Ranch Website - Project History & Development Log
 
 **Created:** February 8, 2026
-**Last Updated:** February 10, 2026 (Session 5, continued)
+**Last Updated:** February 10, 2026 (Session 6)
 
 ---
 
@@ -198,6 +198,24 @@ A unique feature allowing the ranch owner to edit website text directly from the
   - Animals (chickens, ducks, goats, turkeys, geese)
   - Products (chicken-eggs, soap-lavender)
   - Hero placeholder, OG image
+
+### 31. Customer Order Confirmation Email (Feb 10, 2026 — Session 6)
+
+- **Problem:** Customers completed checkout and paid via Stripe but received no confirmation email. The admin got a "New Order" notification, but buyers got nothing.
+- **Solution:** Added a branded customer-facing confirmation email that sends automatically after Stripe payment.
+- **Email template** (`buildOrderConfirmationTemplate`) includes:
+  - Green "Order Confirmed!" banner
+  - Personalized greeting with customer name
+  - Centered order number highlight box
+  - Items table (name, qty, price) with subtotal/delivery fee/tax/total breakdown
+  - Fulfillment section (pickup at ranch vs delivery with address)
+  - "What Happens Next?" numbered steps
+  - Contact link for questions
+- **New export:** `notifyOrderConfirmation(order)` — sends to `order.customerEmail`, subject `Order Confirmed — #BR-2026-XXXX | Besso Ranch`, logged as type `order_confirmation`
+- **Webhook fix:** Discovered that the fire-and-forget pattern (`.catch()` only, no `await`) was causing Vercel to terminate the serverless function before SMTP connections completed. Error in logs: `"Client network socket disconnected before secure TLS connection was established"`. Fixed by switching both `notifyNewOrder()` and `notifyOrderConfirmation()` to `await Promise.allSettled([...])` so emails complete before the function returns. Both run in parallel for speed.
+- **Verified working:** Test checkout on bessoranch.com confirmed customer receives confirmation email and admin receives new order notification.
+- **Files modified:** 2 (`src/lib/notifications.ts`, `src/app/api/webhook/stripe/route.ts`)
+- Build passes, committed and pushed to main for auto-deploy
 
 ### 30. QA Pass — Fix Duplicate Page Titles & Sitemap Gaps (Feb 10, 2026 — Session 5)
 
