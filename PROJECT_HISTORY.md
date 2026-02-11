@@ -199,6 +199,14 @@ A unique feature allowing the ranch owner to edit website text directly from the
   - Products (chicken-eggs, soap-lavender)
   - Hero placeholder, OG image
 
+### 29. Testing & QA Checklist (Feb 10, 2026 — Session 5)
+
+- Created `TESTING_QA_CHECKLIST.md` with 100+ test cases across 14 categories
+- Categories: Public Pages (22), Navigation (15), Shopping Cart (19), Checkout & Payments (12), Email Notifications (7), Contact Form (6), Instagram Gallery (10), Admin Dashboard (33), Inline Editing (10), SEO & Metadata (9), Animations & Easter Eggs (6), Responsive Design (12), Contact Info Consistency (5), Performance & Basics (5)
+- Includes Stripe test card tip, responsive breakpoints to test, and sign-off section
+- **Files created:** 1 (`TESTING_QA_CHECKLIST.md`)
+- Committed and pushed to main
+
 ### 28. Cleanup — Remove Debug Logs & Add Aria Labels (Feb 10, 2026 — Session 5)
 
 - **Debug console.logs removed:** Cleared 5 debug `console.log` statements from `EditModeContext.tsx` (4 logs for admin status checking) and `EditModeToolbar.tsx` (1 mounted log). Browser console is now clean for end users.
